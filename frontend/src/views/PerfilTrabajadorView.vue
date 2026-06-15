@@ -17,6 +17,13 @@
           <div>🏷 {{ trabajador.categoria }}</div>
           <div>⏱ {{ trabajador.experiencia }}</div>
           <div>✅ Verificado</div>
+          <router-link
+            v-if="auth.esCliente"
+            :to="`/trabajador/${trabajador.id}/solicitar`"
+            class="btn-solicitar"
+            >
+            📩 Solicitar servicio
+          </router-link>
         </div>
         <div v-if="trabajador.descripcion" class="descripcion">
           {{ trabajador.descripcion }}
@@ -177,4 +184,11 @@ textarea:focus { border-color: #1D9E75; }
 .error { background: #fde8e8; color: #c0392b; padding: 8px 10px; border-radius: 8px; font-size: 13px; margin: 8px 0; }
 .exito { background: #e1f5ee; color: #0f6e56; padding: 8px 10px; border-radius: 8px; font-size: 13px; margin: 8px 0; }
 .estado { text-align: center; padding: 48px; color: #888; }
+.btn-solicitar {
+  display: block; text-align: center; margin-top: 16px;
+  padding: 11px; background: #1D9E75; color: #fff;
+  border-radius: 8px; text-decoration: none;
+  font-size: 14px; font-weight: 600;
+}
+.btn-solicitar:hover { background: #0f6e56; }
 </style>

@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     'trabajadores',
     'calificaciones',
     'geolocalizacion',
+    'solicitudes',
 ]
 
 MIDDLEWARE = [

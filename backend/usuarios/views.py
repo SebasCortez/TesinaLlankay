@@ -29,3 +29,12 @@ def login(request):
 def perfil(request):
     serializer = UsuarioSerializer(request.user)
     return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def admin_listar_clientes(request):
+    if request.user.rol != 'admin':
+        return Response({'error': 'Sin permisos'}, status=403)
+    clientes = Usuario.objects.filter(rol='cliente')
+    serializer = UsuarioSerializer(clientes, many=True)
+    return Response(serializer.data)

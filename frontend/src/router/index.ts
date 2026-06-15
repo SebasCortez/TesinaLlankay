@@ -20,6 +20,16 @@ const router = createRouter({
       component: () => import('../views/AdminView.vue'),
       meta: { requiresAuth: true, requiresAdmin: true }
     },
+    {
+      path: '/solicitudes',
+      component: () => import('../views/SolicitudesView.vue'),
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/trabajador/:id/solicitar',
+      component: () => import('../views/EnviarSolicitudView.vue'),
+      meta: { requiresAuth: true }
+    },
   ]
 })
 

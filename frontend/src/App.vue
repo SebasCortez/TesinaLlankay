@@ -4,9 +4,11 @@
       <router-link to="/" class="logo">🔧 TécniCusco</router-link>
       <div class="nav-links">
         <router-link to="/buscar">Buscar técnicos</router-link>
-        <template v-if="!auth.estaAutenticado">
-          <router-link to="/login">Iniciar sesión</router-link>
-          <router-link to="/registro-cliente" class="btn-nav">Registrarse</router-link>
+        <template v-if="auth.estaAutenticado">
+          <router-link v-if="auth.esAdmin" to="/admin">Panel admin</router-link>
+          <router-link to="/solicitudes">Mis solicitudes</router-link>
+          <router-link to="/mi-perfil">Mi perfil</router-link>
+          <button class="btn-logout" @click="cerrarSesion">Salir</button>
         </template>
         <template v-else>
           <router-link v-if="auth.esAdmin" to="/admin">Panel admin</router-link>

@@ -131,3 +131,12 @@ def detalle_trabajador(request, pk):
         return Response(serializer.data)
     except Trabajador.DoesNotExist:
         return Response({'error': 'No encontrado'}, status=404)
+    
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def admin_listar_trabajadores(request):
+    if request.user.rol != 'admin':
+        return Response({'error': 'Sin permisos'}, status=403)
+    trabajadores = Trabajador.objects.all()
+    serializer = TrabajadorAdminSerializer(trabajadores, many=True)
+    return Response(serializer.data)
