@@ -11,4 +11,5 @@ urlpatterns = [
     path('<int:pk>/rechazar/', views.rechazar_trabajador),
     path('<int:pk>/', views.detalle_trabajador),
     path('disponibilidad/', views.toggle_disponibilidad),
+    path('foto/', views.actualizar_foto),
 ]

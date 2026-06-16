@@ -457,4 +457,12 @@ onMounted(() => cargarDatos())
     transform: rotate(360deg);
   }
 }
+
+.perfil-avatar-wrap { position: relative; flex-shrink: 0; }
+.perfil-avatar-img {
+  width: 80px; height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--border);
+}
 </style>

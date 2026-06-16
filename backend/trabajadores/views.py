@@ -46,7 +46,7 @@ def listar_trabajadores(request):
 
     resultado = []
     for t in trabajadores:
-        data = TrabajadorSerializer(t).data
+        data = TrabajadorSerializer(t, context={'request': request}).data
         if lat and lon and t.latitud and t.longitud:
             distancia = haversine(float(lat), float(lon), t.latitud, t.longitud)
             if distancia <= radio:
@@ -66,7 +66,7 @@ def listar_trabajadores(request):
 def mi_perfil_trabajador(request):
     try:
         trabajador = Trabajador.objects.get(usuario=request.user)
-        serializer = TrabajadorSerializer(trabajador)
+        serializer = TrabajadorSerializer(trabajador, context={'request': request})
         return Response(serializer.data)
     except Trabajador.DoesNotExist:
         return Response({'error': 'No tienes perfil de trabajador'}, status=404)
@@ -127,7 +127,7 @@ def rechazar_trabajador(request, pk):
 def detalle_trabajador(request, pk):
     try:
         trabajador = Trabajador.objects.get(pk=pk, estado='aprobado')
-        serializer = TrabajadorSerializer(trabajador)
+        serializer = TrabajadorSerializer(trabajador, context={'request': request})
         return Response(serializer.data)
     except Trabajador.DoesNotExist:
         return Response({'error': 'No encontrado'}, status=404)
@@ -150,5 +150,18 @@ def toggle_disponibilidad(request):
         trabajador.save()
         estado = 'disponible' if trabajador.disponible else 'no disponible'
         return Response({'mensaje': f'Ahora estás {estado}', 'disponible': trabajador.disponible})
+    except Trabajador.DoesNotExist:
+        return Response({'error': 'No tienes perfil de trabajador'}, status=404)
+    
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def actualizar_foto(request):
+    try:
+        trabajador = Trabajador.objects.get(usuario=request.user)
+        if 'foto' not in request.FILES:
+            return Response({'error': 'No se envió ninguna foto'}, status=400)
+        trabajador.foto = request.FILES['foto']
+        trabajador.save()
+        return Response({'mensaje': 'Foto actualizada', 'foto': request.build_absolute_uri(trabajador.foto.url)})
     except Trabajador.DoesNotExist:
         return Response({'error': 'No tienes perfil de trabajador'}, status=404)

@@ -3,8 +3,18 @@
     <div class="page-header">
       <div class="page-header-inner">
         <div class="perfil-top">
-          <div class="perfil-avatar">
-            {{ auth.usuario?.first_name?.[0] }}{{ auth.usuario?.last_name?.[0] }}
+          <div class="perfil-top">
+            <div class="perfil-avatar-wrap">
+              <img v-if="perfil && perfil.foto_url" :src="perfil.foto_url" class="perfil-avatar-img"
+                alt="Foto de perfil" />
+              <div v-else class="perfil-avatar">
+                {{ auth.usuario?.first_name?.[0] }}{{ auth.usuario?.last_name?.[0] }}
+              </div>
+              <label v-if="auth.esTrabajador && perfil" class="foto-upload-btn" title="Cambiar foto">
+                📷
+                <input type="file" accept="image/*" @change="subirFoto" style="display:none" />
+              </label>
+            </div>
           </div>
           <div>
             <h1>{{ auth.usuario?.first_name }} {{ auth.usuario?.last_name }}</h1>
@@ -145,6 +155,8 @@ const actualizando = ref(false)
 const ubicacionMsg = ref('')
 const toggling = ref(false)
 const toggleMsg = ref('')
+const subiendoFoto = ref(false)
+const fotoMsg = ref('')
 
 const rolTexto: any = { cliente: 'Cliente', trabajador: 'Técnico', admin: 'Administrador' }
 const rolBadge: any = { cliente: 'badge-blue', trabajador: 'badge-green', admin: 'badge-amber' }
@@ -157,6 +169,30 @@ async function cargarPerfil() {
     const res = await axios.get('http://127.0.0.1:8000/api/trabajadores/mi-perfil/')
     perfil.value = res.data
   } catch (e) { console.error(e) }
+}
+
+async function subirFoto(event: Event) {
+  const input = event.target as HTMLInputElement
+  if (!input.files?.length) return
+  const file = input.files[0]
+if (!file) return
+if (file.size > 5 * 1024 * 1024)
+    return alert('La foto no puede pesar más de 5MB')
+  subiendoFoto.value = true
+  try {
+    const formData = new FormData()
+    formData.append('foto', file)
+    const res = await axios.patch('http://127.0.0.1:8000/api/trabajadores/foto/', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' }
+    })
+    perfil.value.foto_url = res.data.foto
+    fotoMsg.value = '✅ Foto actualizada correctamente'
+    setTimeout(() => fotoMsg.value = '', 3000)
+  } catch {
+    alert('Error al subir la foto')
+  } finally {
+    subiendoFoto.value = false
+  }
 }
 
 async function toggleDisponibilidad() {
@@ -348,29 +384,112 @@ onMounted(() => cargarPerfil())
 }
 
 .disponibilidad-box {
-  display: flex; align-items: center; justify-content: space-between;
-  gap: 16px; margin-top: 12px; padding: 16px;
-  background: var(--bg); border-radius: var(--radius);
-  border: 1px solid var(--border); flex-wrap: wrap;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 12px;
+  padding: 16px;
+  background: var(--bg);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  flex-wrap: wrap;
 }
+
 .disponibilidad-title {
-  font-size: 14px; font-weight: 600;
-  display: flex; align-items: center; gap: 8px; margin-bottom: 4px;
+  font-size: 14px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 4px;
 }
-.disponibilidad-desc { font-size: 13px; color: var(--text2); }
+
+.disponibilidad-desc {
+  font-size: 13px;
+  color: var(--text2);
+}
+
 .dot-estado {
-  width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+  flex-shrink: 0;
 }
-.dot-estado.verde { background: #10B981; box-shadow: 0 0 0 3px rgba(16,185,129,0.2); }
-.dot-estado.gris { background: #9CA3AF; box-shadow: 0 0 0 3px rgba(156,163,175,0.2); }
+
+.dot-estado.verde {
+  background: #10B981;
+  box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+}
+
+.dot-estado.gris {
+  background: #9CA3AF;
+  box-shadow: 0 0 0 3px rgba(156, 163, 175, 0.2);
+}
+
 .btn-toggle {
-  padding: 9px 18px; border: none; border-radius: var(--radius-sm);
-  font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit;
+  padding: 9px 18px;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: inherit;
   transition: all 0.15s;
 }
-.btn-toggle-off { background: #FEF3C7; color: #92400E; }
-.btn-toggle-off:hover { background: #FDE68A; }
-.btn-toggle-on { background: var(--green-light); color: #065F46; }
-.btn-toggle-on:hover { background: #A7F3D0; }
-.btn-toggle:disabled { opacity: 0.6; cursor: not-allowed; }
+
+.btn-toggle-off {
+  background: #FEF3C7;
+  color: #92400E;
+}
+
+.btn-toggle-off:hover {
+  background: #FDE68A;
+}
+
+.btn-toggle-on {
+  background: var(--green-light);
+  color: #065F46;
+}
+
+.btn-toggle-on:hover {
+  background: #A7F3D0;
+}
+
+.btn-toggle:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.perfil-avatar-wrap {
+  position: relative;
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+}
+.perfil-avatar-img {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--border);
+}
+.foto-upload-btn {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 24px;
+  height: 24px;
+  background: var(--primary);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  cursor: pointer;
+  border: 2px solid #fff;
+  box-shadow: var(--shadow);
+}
+.foto-upload-btn:hover { background: var(--primary-dark); }
 </style>

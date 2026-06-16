@@ -56,8 +56,11 @@
         <div v-else class="grid">
           <div v-for="t in tecnicos" :key="t.id" class="worker-card card">
             <div class="wc-top">
-              <div class="wc-avatar" :style="{ background: getColor(t.id) }">
-                {{ getIniciales(t.usuario.first_name, t.usuario.last_name) }}
+              <div class="wc-avatar-wrap">
+                <img v-if="t.foto_url" :src="t.foto_url" class="wc-avatar-img" alt="Foto" />
+                <div v-else class="wc-avatar" :style="{ background: getColor(t.id) }">
+                  {{ getIniciales(t.usuario.first_name, t.usuario.last_name) }}
+                </div>
               </div>
               <div class="wc-info">
                 <div class="wc-name">{{ t.usuario.first_name }} {{ t.usuario.last_name }}</div>
@@ -415,5 +418,17 @@ onMounted(() => buscar())
   border-radius: var(--radius-sm);
   font-size: 13px;
   font-weight: 500;
+}
+
+.wc-avatar-wrap {
+  flex-shrink: 0;
+}
+
+.wc-avatar-img {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border);
 }
 </style>

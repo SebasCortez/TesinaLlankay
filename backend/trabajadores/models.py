@@ -37,6 +37,7 @@ class Trabajador(models.Model):
     motivo_rechazo = models.TextField(blank=True)
     fecha_solicitud = models.DateTimeField(auto_now_add=True)
     fecha_aprobacion = models.DateTimeField(null=True, blank=True)
+    foto = models.ImageField(upload_to='fotos_trabajadores/', blank=True, null=True)
 
     def __str__(self):
         return f"{self.usuario.get_full_name()} — {self.oficio} ({self.estado})"
