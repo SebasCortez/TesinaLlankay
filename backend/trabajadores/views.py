@@ -140,3 +140,15 @@ def admin_listar_trabajadores(request):
     trabajadores = Trabajador.objects.all()
     serializer = TrabajadorAdminSerializer(trabajadores, many=True)
     return Response(serializer.data)
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def toggle_disponibilidad(request):
+    try:
+        trabajador = Trabajador.objects.get(usuario=request.user)
+        trabajador.disponible = not trabajador.disponible
+        trabajador.save()
+        estado = 'disponible' if trabajador.disponible else 'no disponible'
+        return Response({'mensaje': f'Ahora estás {estado}', 'disponible': trabajador.disponible})
+    except Trabajador.DoesNotExist:
+        return Response({'error': 'No tienes perfil de trabajador'}, status=404)

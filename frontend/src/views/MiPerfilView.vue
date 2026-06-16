@@ -82,7 +82,7 @@
           </div>
 
           <!-- Actualizar ubicación -->
-          <div v-if="perfil.estado === 'aprobado'" class="ubicacion-box">
+          <div v-if="perfil && perfil.estado === 'aprobado'" class="ubicacion-box">
             <div class="ubicacion-info">
               <div class="ubicacion-title">📍 Mi ubicación</div>
               <div class="ubicacion-desc">Actualiza tu ubicación para que los clientes cercanos te encuentren más
@@ -94,6 +94,24 @@
           </div>
           <div v-if="ubicacionMsg" class="alert alert-success" style="margin-top:12px">{{ ubicacionMsg }}</div>
         </div>
+
+        <!-- Toggle disponibilidad -->
+        <div v-if="perfil && perfil.estado === 'aprobado'" class="disponibilidad-box">
+          <div class="disponibilidad-info">
+            <div class="disponibilidad-title">
+              <span :class="['dot-estado', perfil.disponible ? 'verde' : 'gris']"></span>
+              {{ perfil.disponible ? 'Estás disponible' : 'Estás como ocupado' }}
+            </div>
+            <div class="disponibilidad-desc">
+              {{ perfil.disponible ? 'Los clientes pueden contactarte y enviarte solicitudes.' : 'No apareces comodisponible para nuevos clientes.' }}
+            </div>
+          </div>
+          <button :class="['btn-toggle', perfil.disponible ? 'btn-toggle-off' : 'btn-toggle-on']"
+            @click="toggleDisponibilidad" :disabled="toggling">
+            {{ toggling ? 'Actualizando...' : perfil.disponible ? 'Marcar como ocupado' : 'Marcar como disponible' }}
+          </button>
+        </div>
+        <div v-if="toggleMsg" class="alert alert-success" style="margin-top:12px">{{ toggleMsg }}</div>
 
         <!-- Stats si es trabajador aprobado -->
         <div v-if="auth.esTrabajador && perfil && perfil.estado === 'aprobado'" class="stats-row">
@@ -125,6 +143,8 @@ const auth = useAuthStore()
 const perfil = ref<any>(null)
 const actualizando = ref(false)
 const ubicacionMsg = ref('')
+const toggling = ref(false)
+const toggleMsg = ref('')
 
 const rolTexto: any = { cliente: 'Cliente', trabajador: 'Técnico', admin: 'Administrador' }
 const rolBadge: any = { cliente: 'badge-blue', trabajador: 'badge-green', admin: 'badge-amber' }
@@ -137,6 +157,20 @@ async function cargarPerfil() {
     const res = await axios.get('http://127.0.0.1:8000/api/trabajadores/mi-perfil/')
     perfil.value = res.data
   } catch (e) { console.error(e) }
+}
+
+async function toggleDisponibilidad() {
+  toggling.value = true
+  try {
+    const res = await axios.patch('http://127.0.0.1:8000/api/trabajadores/disponibilidad/')
+    perfil.value.disponible = res.data.disponible
+    toggleMsg.value = res.data.mensaje
+    setTimeout(() => toggleMsg.value = '', 3000)
+  } catch {
+    alert('Error al actualizar disponibilidad')
+  } finally {
+    toggling.value = false
+  }
 }
 
 function actualizarUbicacion() {
@@ -312,4 +346,31 @@ onMounted(() => cargarPerfil())
   color: var(--text2);
   margin-top: 4px;
 }
+
+.disponibilidad-box {
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; margin-top: 12px; padding: 16px;
+  background: var(--bg); border-radius: var(--radius);
+  border: 1px solid var(--border); flex-wrap: wrap;
+}
+.disponibilidad-title {
+  font-size: 14px; font-weight: 600;
+  display: flex; align-items: center; gap: 8px; margin-bottom: 4px;
+}
+.disponibilidad-desc { font-size: 13px; color: var(--text2); }
+.dot-estado {
+  width: 10px; height: 10px; border-radius: 50%; display: inline-block; flex-shrink: 0;
+}
+.dot-estado.verde { background: #10B981; box-shadow: 0 0 0 3px rgba(16,185,129,0.2); }
+.dot-estado.gris { background: #9CA3AF; box-shadow: 0 0 0 3px rgba(156,163,175,0.2); }
+.btn-toggle {
+  padding: 9px 18px; border: none; border-radius: var(--radius-sm);
+  font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit;
+  transition: all 0.15s;
+}
+.btn-toggle-off { background: #FEF3C7; color: #92400E; }
+.btn-toggle-off:hover { background: #FDE68A; }
+.btn-toggle-on { background: var(--green-light); color: #065F46; }
+.btn-toggle-on:hover { background: #A7F3D0; }
+.btn-toggle:disabled { opacity: 0.6; cursor: not-allowed; }
 </style>

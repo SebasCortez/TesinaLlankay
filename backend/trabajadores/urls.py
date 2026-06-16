@@ -10,4 +10,5 @@ urlpatterns = [
     path('<int:pk>/aprobar/', views.aprobar_trabajador),
     path('<int:pk>/rechazar/', views.rechazar_trabajador),
     path('<int:pk>/', views.detalle_trabajador),
+    path('disponibilidad/', views.toggle_disponibilidad),
 ]
