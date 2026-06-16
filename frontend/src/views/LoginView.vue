@@ -1,21 +1,36 @@
 <template>
   <div class="page-center">
-    <div class="card">
-      <h2>Iniciar sesión</h2>
-      <div class="campo">
-        <label>Usuario</label>
-        <input v-model="form.username" type="text" placeholder="Tu nombre de usuario" />
+    <div class="login-card card">
+      <div class="login-header">
+        <div class="login-icon">🔧</div>
+        <h2>Bienvenido de nuevo</h2>
+        <p>Inicia sesión en tu cuenta de TécniCusco</p>
       </div>
-      <div class="campo">
-        <label>Contraseña</label>
-        <input v-model="form.password" type="password" placeholder="Tu contraseña" />
+
+      <div class="form-group">
+        <label class="form-label">Usuario</label>
+        <input v-model="form.username" class="form-input" type="text" placeholder="Tu nombre de usuario"
+          @keydown.enter="iniciarSesion" />
       </div>
-      <div v-if="error" class="error">{{ error }}</div>
-      <button class="btn-verde" @click="iniciarSesion" :disabled="cargando">
-        {{ cargando ? 'Ingresando...' : 'Ingresar' }}
+      <div class="form-group">
+        <label class="form-label">Contraseña</label>
+        <input v-model="form.password" class="form-input" type="password" placeholder="Tu contraseña"
+          @keydown.enter="iniciarSesion" />
+      </div>
+
+      <div v-if="error" class="alert alert-error">{{ error }}</div>
+
+      <button class="btn-primary" style="width:100%;justify-content:center;padding:12px" @click="iniciarSesion"
+        :disabled="cargando">
+        {{ cargando ? 'Ingresando...' : 'Iniciar sesión' }}
       </button>
-      <p class="link">¿No tienes cuenta?
-        <router-link to="/registro-cliente">Regístrate como cliente</router-link> o
+
+      <hr class="divider">
+
+      <p class="login-footer">
+        ¿No tienes cuenta?
+        <router-link to="/registro-cliente">Regístrate como cliente</router-link>
+        o
         <router-link to="/registro-trabajador">como técnico</router-link>
       </p>
     </div>
@@ -35,12 +50,14 @@ const form = ref({ username: '', password: '' })
 
 async function iniciarSesion() {
   error.value = ''
+  if (!form.value.username || !form.value.password)
+    return error.value = 'Completa todos los campos'
   cargando.value = true
   try {
     await auth.login(form.value.username, form.value.password)
     if (auth.esAdmin) router.push('/admin')
     else router.push('/buscar')
-  } catch (e: any) {
+  } catch {
     error.value = 'Usuario o contraseña incorrectos'
   } finally {
     cargando.value = false
@@ -49,34 +66,53 @@ async function iniciarSesion() {
 </script>
 
 <style scoped>
-.page-center {
-  min-height: calc(100vh - 56px);
-  display: flex; align-items: center; justify-content: center;
-  padding: 24px;
+.login-card {
+  padding: 40px;
+  width: 420px;
+  max-width: 100%;
 }
-.card {
-  background: #fff; border: 1px solid #e0e0e0;
-  border-radius: 16px; padding: 32px;
-  width: 400px; max-width: 100%;
+
+.login-header {
+  text-align: center;
+  margin-bottom: 32px;
 }
-h2 { font-size: 20px; font-weight: 700; margin-bottom: 24px; }
-.campo { margin-bottom: 16px; }
-.campo label { display: block; font-size: 12px; font-weight: 600; color: #555; margin-bottom: 5px; }
-.campo input {
-  width: 100%; padding: 10px 12px;
-  border: 1px solid #ccc; border-radius: 8px;
-  font-size: 14px; outline: none;
+
+.login-icon {
+  width: 52px;
+  height: 52px;
+  background: var(--primary-light);
+  border-radius: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  margin: 0 auto 16px;
 }
-.campo input:focus { border-color: #1D9E75; }
-.btn-verde {
-  width: 100%; padding: 11px;
-  background: #1D9E75; color: #fff;
-  border: none; border-radius: 8px;
-  font-size: 14px; font-weight: 600;
-  cursor: pointer; margin-top: 8px;
+
+.login-header h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 6px;
 }
-.btn-verde:disabled { background: #aaa; cursor: not-allowed; }
-.error { background: #fde8e8; color: #c0392b; padding: 10px; border-radius: 8px; font-size: 13px; margin-bottom: 12px; }
-.link { font-size: 13px; color: #666; margin-top: 16px; text-align: center; }
-.link a { color: #1D9E75; }
+
+.login-header p {
+  font-size: 14px;
+  color: var(--text2);
+}
+
+.login-footer {
+  font-size: 13px;
+  color: var(--text2);
+  text-align: center;
+}
+
+.login-footer a {
+  color: var(--primary);
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.login-footer a:hover {
+  text-decoration: underline;
+}
 </style>

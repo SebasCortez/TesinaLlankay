@@ -1,72 +1,97 @@
 <template>
-  <div class="contenedor">
-    <h2>{{ auth.esCliente ? 'Mis solicitudes' : 'Solicitudes recibidas' }}</h2>
+  <div class="page">
+    <div class="page-header">
+      <div class="page-header-inner">
+        <h1>{{ auth.esCliente ? 'Mis solicitudes' : 'Solicitudes recibidas' }}</h1>
+        <p>{{ auth.esCliente ? 'Historial de servicios que has solicitado' : 'Servicios que los clientes te han solicitado' }}</p>
+      </div>
+    </div>
 
-    <div v-if="cargando" class="estado">Cargando...</div>
-    <div v-else-if="solicitudes.length === 0" class="estado">No hay solicitudes aún</div>
+    <div class="contenedor">
+      <div v-if="cargando" class="estado">
+        <div class="spinner"></div>
+        <p>Cargando solicitudes...</p>
+      </div>
 
-    <div class="lista">
-      <div v-for="s in solicitudes" :key="s.id" class="solicitud">
-        <div class="solicitud-header">
-          <div class="header-info">
-            <div v-if="auth.esCliente">
-              <div class="nombre">{{ s.trabajador.usuario.first_name }} {{ s.trabajador.usuario.last_name }}</div>
-              <div class="sub">{{ s.trabajador.oficio }}</div>
+      <div v-else-if="solicitudes.length === 0" class="estado">
+        <div style="font-size:48px;margin-bottom:16px">📋</div>
+        <h3>No hay solicitudes aún</h3>
+        <p v-if="auth.esCliente">Busca un técnico y envía tu primera solicitud</p>
+        <router-link v-if="auth.esCliente" to="/buscar" class="btn-primary" style="margin-top:16px">Buscar
+          técnicos</router-link>
+      </div>
+
+      <div v-else class="lista">
+        <div v-for="s in solicitudes" :key="s.id" class="solicitud-card card">
+          <div class="sol-header">
+            <div class="sol-persona">
+              <div class="sol-avatar">
+                <span v-if="auth.esCliente">{{ s.trabajador.usuario.first_name[0] }}{{ s.trabajador.usuario.last_name[0]
+                  }}</span>
+                <span v-else>{{ s.cliente.first_name[0] }}{{ s.cliente.last_name[0] }}</span>
+              </div>
+              <div>
+                <div class="sol-nombre" v-if="auth.esCliente">{{ s.trabajador.usuario.first_name }} {{
+                  s.trabajador.usuario.last_name }}</div>
+                <div class="sol-nombre" v-else>{{ s.cliente.first_name }} {{ s.cliente.last_name }}</div>
+                <div class="sol-sub" v-if="auth.esCliente">{{ s.trabajador.oficio }}</div>
+                <div class="sol-sub" v-else>{{ s.cliente.celular }}</div>
+              </div>
             </div>
-            <div v-else>
-              <div class="nombre">{{ s.cliente.first_name }} {{ s.cliente.last_name }}</div>
-              <div class="sub">{{ s.cliente.celular }}</div>
+            <span :class="['badge', estadoBadge[s.estado]]">{{ estadoTexto[s.estado] }}</span>
+          </div>
+
+          <div class="sol-body">
+            <div class="sol-campo">
+              <span class="sol-label">Mensaje</span>
+              <p>{{ s.mensaje }}</p>
+            </div>
+            <div class="sol-campo">
+              <span class="sol-label">Problema</span>
+              <p>{{ s.descripcion_problema }}</p>
+            </div>
+            <div class="sol-campo">
+              <span class="sol-label">Dirección</span>
+              <p>📍 {{ s.direccion }}</p>
+            </div>
+            <div v-if="s.motivo_rechazo" class="sol-campo">
+              <span class="sol-label">Motivo de rechazo</span>
+              <p class="txt-red">{{ s.motivo_rechazo }}</p>
             </div>
           </div>
-          <span :class="['estado-badge', s.estado]">{{ estadoTexto[s.estado] }}</span>
-        </div>
 
-        <div class="solicitud-body">
-          <div class="campo-info">
-            <span class="label">Mensaje</span>
-            <p>{{ s.mensaje }}</p>
-          </div>
-          <div class="campo-info">
-            <span class="label">Problema</span>
-            <p>{{ s.descripcion_problema }}</p>
-          </div>
-          <div class="campo-info">
-            <span class="label">Dirección</span>
-            <p>📍 {{ s.direccion }}</p>
-          </div>
-          <div v-if="s.motivo_rechazo" class="campo-info">
-            <span class="label">Motivo de rechazo</span>
-            <p class="rechazo">{{ s.motivo_rechazo }}</p>
-          </div>
-          <div class="fecha">{{ formatFecha(s.fecha_solicitud) }}</div>
-        </div>
+          <div class="sol-footer">
+            <span class="sol-fecha">{{ formatFecha(s.fecha_solicitud) }}</span>
 
-        <!-- Acciones para trabajador -->
-        <div v-if="auth.esTrabajador" class="acciones">
-          <div v-if="s.estado === 'pendiente'" style="display:flex;gap:8px;flex-wrap:wrap">
-            <button class="btn-verde" @click="cambiarEstado(s.id, 'aceptado')">✅ Aceptar</button>
-            <div style="display:flex;gap:6px;flex:1">
-              <input v-model="motivos[s.id]" placeholder="Motivo de rechazo..." style="flex:1;padding:8px 10px;border:1px solid #ccc;border-radius:8px;font-size:13px;outline:none" />
-              <button class="btn-rojo" @click="cambiarEstado(s.id, 'rechazado', motivos[s.id])">❌ Rechazar</button>
+            <!-- Acciones trabajador -->
+            <div v-if="auth.esTrabajador" class="sol-acciones">
+              <div v-if="s.estado === 'pendiente'" style="display:flex;gap:8px;flex-wrap:wrap">
+                <button class="btn-primary" @click="cambiarEstado(s.id, 'aceptado')" :disabled="procesando === s.id">✅
+                  Aceptar</button>
+                <div style="display:flex;gap:6px">
+                  <input v-model="motivos[s.id]" class="form-input" style="width:200px;padding:8px 12px"
+                    placeholder="Motivo de rechazo..." />
+                  <button class="btn-danger" @click="cambiarEstado(s.id, 'rechazado', motivos[s.id])"
+                    :disabled="procesando === s.id">❌ Rechazar</button>
+                </div>
+              </div>
+              <button v-if="s.estado === 'aceptado'" class="btn-primary" style="background:#7C3AED"
+                @click="cambiarEstado(s.id, 'en_progreso')" :disabled="procesando === s.id">🔧 Marcar en progreso</button>
+              <button v-if="s.estado === 'en_progreso'" class="btn-primary" @click="cambiarEstado(s.id, 'completado')"
+                :disabled="procesando === s.id">✔ Marcar completado</button>
+            </div>
+
+            <!-- Acciones cliente -->
+            <div v-if="auth.esCliente && s.estado === 'completado'">
+              <router-link :to="`/trabajador/${s.trabajador.id}`" class="btn-primary">⭐ Calificar técnico</router-link>
             </div>
           </div>
-          <div v-if="s.estado === 'aceptado'">
-            <button class="btn-azul" @click="cambiarEstado(s.id, 'en_progreso')">🔧 Marcar en progreso</button>
-          </div>
-          <div v-if="s.estado === 'en_progreso'">
-            <button class="btn-verde" @click="cambiarEstado(s.id, 'completado')">✔ Marcar como completado</button>
-          </div>
-        </div>
 
-        <!-- Acciones para cliente -->
-        <div v-if="auth.esCliente && s.estado === 'completado'" class="acciones">
-          <router-link :to="`/trabajador/${s.trabajador.id}`" class="btn-verde-link">
-            ⭐ Calificar al técnico
-          </router-link>
-        </div>
-
-        <div v-if="mensajes[s.id]" :class="['msg', mensajes[s.id].tipo]">
-          {{ mensajes[s.id].texto }}
+          <div v-if="mensajes[s.id]"
+            :class="['alert', mensajes[s.id].tipo === 'exito' ? 'alert-success' : 'alert-error']"
+            style="margin:0 20px 16px">
+            {{ mensajes[s.id].texto }}
+          </div>
         </div>
       </div>
     </div>
@@ -81,6 +106,7 @@ import { useAuthStore } from '../stores/auth'
 const auth = useAuthStore()
 const solicitudes = ref<any[]>([])
 const cargando = ref(false)
+const procesando = ref<number | null>(null)
 const motivos = ref<any>({})
 const mensajes = ref<any>({})
 
@@ -91,9 +117,16 @@ const estadoTexto: any = {
   completado: '✔ Completado',
   rechazado: '❌ Rechazado'
 }
+const estadoBadge: any = {
+  pendiente: 'badge-amber',
+  aceptado: 'badge-green',
+  en_progreso: 'badge-blue',
+  completado: 'badge-green',
+  rechazado: 'badge-red'
+}
 
 function formatFecha(fecha: string) {
-  return new Date(fecha).toLocaleDateString('es-PE', { year:'numeric', month:'long', day:'numeric', hour:'2-digit', minute:'2-digit' })
+  return new Date(fecha).toLocaleDateString('es-PE', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })
 }
 
 async function cargarSolicitudes() {
@@ -107,15 +140,17 @@ async function cargarSolicitudes() {
 }
 
 async function cambiarEstado(id: number, estado: string, motivo?: string) {
+  procesando.value = id
   try {
     const res = await axios.patch(`http://127.0.0.1:8000/api/solicitudes/${id}/estado/`, {
-      estado,
-      motivo_rechazo: motivo || ''
+      estado, motivo_rechazo: motivo || ''
     })
     mensajes.value[id] = { tipo: 'exito', texto: res.data.mensaje }
     await cargarSolicitudes()
   } catch (e: any) {
     mensajes.value[id] = { tipo: 'error', texto: e.response?.data?.error || 'Error al actualizar' }
+  } finally {
+    procesando.value = null
   }
 }
 
@@ -123,51 +158,170 @@ onMounted(() => cargarSolicitudes())
 </script>
 
 <style scoped>
-.contenedor { max-width: 800px; margin: 40px auto; padding: 0 24px; }
-h2 { font-size: 22px; font-weight: 700; margin-bottom: 24px; }
-.estado { text-align: center; padding: 48px; color: #888; }
-.lista { display: flex; flex-direction: column; gap: 16px; }
-.solicitud { background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; overflow: hidden; }
-.solicitud-header {
-  display: flex; justify-content: space-between; align-items: center;
-  padding: 16px 20px; border-bottom: 1px solid #f0eeea; background: #fafaf8;
+.page {
+  min-height: calc(100vh - 64px);
 }
-.nombre { font-size: 15px; font-weight: 600; }
-.sub { font-size: 12px; color: #888; margin-top: 2px; }
-.estado-badge {
-  font-size: 12px; font-weight: 600; padding: 4px 12px; border-radius: 20px;
+
+.page-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 32px;
 }
-.estado-badge.pendiente { background: #FFF8E1; color: #7A5800; }
-.estado-badge.aceptado { background: #e1f5ee; color: #0f6e56; }
-.estado-badge.en_progreso { background: #E6F1FB; color: #0C447C; }
-.estado-badge.completado { background: #e1f5ee; color: #0f6e56; }
-.estado-badge.rechazado { background: #fde8e8; color: #c0392b; }
-.solicitud-body { padding: 16px 20px; display: flex; flex-direction: column; gap: 10px; }
-.campo-info { font-size: 13px; }
-.label { font-size: 11px; font-weight: 600; color: #888; text-transform: uppercase; display: block; margin-bottom: 2px; }
-.campo-info p { color: #333; line-height: 1.5; }
-.rechazo { color: #c0392b; }
-.fecha { font-size: 11px; color: #aaa; margin-top: 4px; }
-.acciones { padding: 14px 20px; border-top: 1px solid #f0eeea; background: #fafaf8; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
-.btn-verde {
-  padding: 8px 16px; background: #1D9E75; color: #fff;
-  border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;
+
+.page-header-inner {
+  max-width: 800px;
+  margin: 0 auto;
 }
-.btn-verde:hover { background: #0f6e56; }
-.btn-rojo {
-  padding: 8px 16px; background: #e24b4a; color: #fff;
-  border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;
+
+.page-header h1 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 4px;
 }
-.btn-azul {
-  padding: 8px 16px; background: #378ADD; color: #fff;
-  border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;
+
+.page-header p {
+  font-size: 14px;
+  color: var(--text2);
 }
-.btn-verde-link {
-  padding: 8px 16px; background: #1D9E75; color: #fff;
-  border-radius: 8px; font-size: 13px; font-weight: 600;
-  text-decoration: none; display: inline-block;
+
+.contenedor {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 28px 32px;
 }
-.msg { padding: 10px 20px; font-size: 13px; }
-.msg.exito { background: #e1f5ee; color: #0f6e56; }
-.msg.error { background: #fde8e8; color: #c0392b; }
+
+.estado {
+  text-align: center;
+  padding: 64px 32px;
+  color: var(--text2);
+}
+
+.estado h3 {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 6px;
+}
+
+.estado p {
+  font-size: 14px;
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin: 0 auto 16px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.solicitud-card {
+  overflow: hidden;
+}
+
+.sol-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+}
+
+.sol-persona {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.sol-avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--primary-light);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.sol-nombre {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+.sol-sub {
+  font-size: 12px;
+  color: var(--text2);
+  margin-top: 2px;
+}
+
+.sol-body {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sol-campo {
+  font-size: 13px;
+}
+
+.sol-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 3px;
+}
+
+.sol-campo p {
+  color: var(--text);
+  line-height: 1.55;
+}
+
+.txt-red {
+  color: var(--red) !important;
+}
+
+.sol-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-top: 1px solid var(--border);
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.sol-fecha {
+  font-size: 12px;
+  color: var(--text3);
+}
+
+.sol-acciones {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+}
 </style>

@@ -1,43 +1,116 @@
 <template>
-  <div class="contenedor">
-    <div class="card" v-if="auth.usuario">
-      <h2>Mi perfil</h2>
-      <div class="info-row"><span>Nombre</span><strong>{{ auth.usuario.first_name }} {{ auth.usuario.last_name }}</strong></div>
-      <div class="info-row"><span>Usuario</span><strong>{{ auth.usuario.username }}</strong></div>
-      <div class="info-row"><span>Correo</span><strong>{{ auth.usuario.email }}</strong></div>
-      <div class="info-row"><span>Celular</span><strong>{{ auth.usuario.celular }}</strong></div>
-      <div class="info-row"><span>Distrito</span><strong>{{ auth.usuario.distrito }}</strong></div>
-      <div class="info-row"><span>Rol</span><strong class="rol">{{ auth.usuario.rol }}</strong></div>
+  <div class="page">
+    <div class="page-header">
+      <div class="page-header-inner">
+        <div class="perfil-top">
+          <div class="perfil-avatar">
+            {{ auth.usuario?.first_name?.[0] }}{{ auth.usuario?.last_name?.[0] }}
+          </div>
+          <div>
+            <h1>{{ auth.usuario?.first_name }} {{ auth.usuario?.last_name }}</h1>
+            <span :class="['badge', rolBadge[auth.usuario?.rol]]">{{ rolTexto[auth.usuario?.rol] }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
 
-      <!-- Si es trabajador -->
-      <div v-if="auth.esTrabajador && perfil">
-        <hr>
-        <h3>Mi perfil técnico</h3>
-        <div :class="['estado-badge', perfil.estado]">
-          {{ estadoTexto[perfil.estado] }}
-        </div>
-        <div v-if="perfil.estado === 'pendiente'" class="aviso-pendiente">
-          ⏳ Tu solicitud está siendo revisada por un administrador. Te notificaremos pronto.
-        </div>
-        <div v-if="perfil.estado === 'rechazado'" class="aviso-rechazo">
-          ❌ Tu solicitud fue rechazada. Motivo: {{ perfil.motivo_rechazo }}
-        </div>
-        <div v-if="perfil.estado === 'aprobado'" class="aviso-aprobado">
-          ✅ ¡Estás aprobado! Ya apareces en los resultados de búsqueda.
-        </div>
-        <div class="info-row"><span>Categoría</span><strong>{{ perfil.categoria }}</strong></div>
-        <div class="info-row"><span>Oficio</span><strong>{{ perfil.oficio }}</strong></div>
-        <div class="info-row"><span>Experiencia</span><strong>{{ perfil.experiencia }}</strong></div>
-        <div class="info-row"><span>Calificación</span><strong>⭐ {{ perfil.calificacion_promedio.toFixed(1) }} ({{ perfil.num_calificaciones }} calif.)</strong></div>
+    <div class="contenedor">
+      <div class="layout">
 
-        <div v-if="perfil.estado === 'aprobado'" class="ubicacion-seccion">
-          <h3>Mi ubicación actual</h3>
-          <p class="ubicacion-desc">Actualiza tu ubicación para que los clientes cercanos puedan encontrarte.</p>
-          <button class="btn-verde" @click="actualizarUbicacion" :disabled="actualizando">
-            {{ actualizando ? '📍 Obteniendo ubicación...' : '📍 Actualizar mi ubicación' }}
-          </button>
-          <div v-if="ubicacionMsg" class="exito">{{ ubicacionMsg }}</div>
+        <!-- Info personal -->
+        <div class="card seccion">
+          <h3>Información personal</h3>
+          <div class="info-grid">
+            <div class="info-item">
+              <span class="info-label">Nombre completo</span>
+              <span class="info-val">{{ auth.usuario?.first_name }} {{ auth.usuario?.last_name }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Usuario</span>
+              <span class="info-val">@{{ auth.usuario?.username }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Correo</span>
+              <span class="info-val">{{ auth.usuario?.email || '—' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Celular</span>
+              <span class="info-val">{{ auth.usuario?.celular || '—' }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Distrito</span>
+              <span class="info-val">{{ auth.usuario?.distrito || '—' }}, Cusco</span>
+            </div>
+          </div>
         </div>
+
+        <!-- Perfil técnico si es trabajador -->
+        <div v-if="auth.esTrabajador && perfil" class="card seccion">
+          <div class="seccion-header">
+            <h3>Mi perfil técnico</h3>
+            <span :class="['badge', estadoBadge[perfil.estado]]">{{ estadoTexto[perfil.estado] }}</span>
+          </div>
+
+          <div v-if="perfil.estado === 'pendiente'" class="alert alert-warning">
+            ⏳ Tu solicitud está siendo revisada por un administrador. Te avisaremos pronto.
+          </div>
+          <div v-if="perfil.estado === 'rechazado'" class="alert alert-error">
+            ❌ Tu solicitud fue rechazada. Motivo: <strong>{{ perfil.motivo_rechazo }}</strong>
+          </div>
+          <div v-if="perfil.estado === 'aprobado'" class="alert alert-success">
+            ✅ ¡Estás aprobado! Ya apareces en los resultados de búsqueda.
+          </div>
+
+          <div class="info-grid" style="margin-top:16px">
+            <div class="info-item">
+              <span class="info-label">Categoría</span>
+              <span class="info-val">{{ perfil.categoria }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Oficio</span>
+              <span class="info-val">{{ perfil.oficio }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Experiencia</span>
+              <span class="info-val">{{ perfil.experiencia }}</span>
+            </div>
+            <div class="info-item">
+              <span class="info-label">Calificación</span>
+              <span class="info-val">⭐ {{ perfil.calificacion_promedio.toFixed(1) }} ({{ perfil.num_calificaciones }}
+                calif.)</span>
+            </div>
+          </div>
+
+          <!-- Actualizar ubicación -->
+          <div v-if="perfil.estado === 'aprobado'" class="ubicacion-box">
+            <div class="ubicacion-info">
+              <div class="ubicacion-title">📍 Mi ubicación</div>
+              <div class="ubicacion-desc">Actualiza tu ubicación para que los clientes cercanos te encuentren más
+                fácilmente.</div>
+            </div>
+            <button class="btn-primary" @click="actualizarUbicacion" :disabled="actualizando">
+              {{ actualizando ? '📍 Obteniendo...' : '📍 Actualizar ubicación' }}
+            </button>
+          </div>
+          <div v-if="ubicacionMsg" class="alert alert-success" style="margin-top:12px">{{ ubicacionMsg }}</div>
+        </div>
+
+        <!-- Stats si es trabajador aprobado -->
+        <div v-if="auth.esTrabajador && perfil && perfil.estado === 'aprobado'" class="stats-row">
+          <div class="stat-card card">
+            <div class="stat-num">{{ perfil.num_calificaciones }}</div>
+            <div class="stat-label">Servicios</div>
+          </div>
+          <div class="stat-card card">
+            <div class="stat-num">{{ perfil.calificacion_promedio.toFixed(1) }}⭐</div>
+            <div class="stat-label">Calificación</div>
+          </div>
+          <div class="stat-card card">
+            <div class="stat-num" style="color:var(--green)">{{ perfil.disponible ? 'Sí' : 'No' }}</div>
+            <div class="stat-label">Disponible</div>
+          </div>
+        </div>
+
       </div>
     </div>
   </div>
@@ -53,20 +126,17 @@ const perfil = ref<any>(null)
 const actualizando = ref(false)
 const ubicacionMsg = ref('')
 
-const estadoTexto: any = {
-  pendiente: '⏳ Pendiente de aprobación',
-  aprobado: '✅ Aprobado',
-  rechazado: '❌ Rechazado'
-}
+const rolTexto: any = { cliente: 'Cliente', trabajador: 'Técnico', admin: 'Administrador' }
+const rolBadge: any = { cliente: 'badge-blue', trabajador: 'badge-green', admin: 'badge-amber' }
+const estadoTexto: any = { pendiente: '⏳ Pendiente', aprobado: '✅ Aprobado', rechazado: '❌ Rechazado' }
+const estadoBadge: any = { pendiente: 'badge-amber', aprobado: 'badge-green', rechazado: 'badge-red' }
 
 async function cargarPerfil() {
   if (!auth.esTrabajador) return
   try {
     const res = await axios.get('http://127.0.0.1:8000/api/trabajadores/mi-perfil/')
     perfil.value = res.data
-  } catch (e) {
-    console.error(e)
-  }
+  } catch (e) { console.error(e) }
 }
 
 function actualizarUbicacion() {
@@ -81,16 +151,11 @@ function actualizarUbicacion() {
         })
         ubicacionMsg.value = '✅ Ubicación actualizada correctamente'
         setTimeout(() => ubicacionMsg.value = '', 3000)
-      } catch (e) {
+      } catch {
         alert('Error al actualizar ubicación')
-      } finally {
-        actualizando.value = false
-      }
+      } finally { actualizando.value = false }
     },
-    () => {
-      alert('No se pudo obtener tu ubicación')
-      actualizando.value = false
-    }
+    () => { alert('No se pudo obtener tu ubicación'); actualizando.value = false }
   )
 }
 
@@ -98,30 +163,153 @@ onMounted(() => cargarPerfil())
 </script>
 
 <style scoped>
-.contenedor { max-width: 600px; margin: 40px auto; padding: 0 24px; }
-.card { background: #fff; border: 1px solid #e0e0e0; border-radius: 16px; padding: 32px; }
-h2 { font-size: 20px; font-weight: 700; margin-bottom: 20px; }
-h3 { font-size: 16px; font-weight: 600; margin: 20px 0 12px; }
-.info-row { display: flex; justify-content: space-between; font-size: 14px; padding: 8px 0; border-bottom: 1px solid #f0eeea; }
-.info-row span { color: #888; }
-.rol { text-transform: capitalize; color: #1D9E75; }
-hr { border: none; border-top: 1px solid #e0e0e0; margin: 20px 0; }
-.estado-badge {
-  display: inline-block; padding: 6px 14px;
-  border-radius: 20px; font-size: 13px; font-weight: 600; margin-bottom: 12px;
+.page {
+  min-height: calc(100vh - 64px);
 }
-.estado-badge.pendiente { background: #FFF8E1; color: #7A5800; }
-.estado-badge.aprobado { background: #e1f5ee; color: #0f6e56; }
-.estado-badge.rechazado { background: #fde8e8; color: #c0392b; }
-.aviso-pendiente { background: #FFF8E1; border: 1px solid #FFD54F; color: #7A5800; padding: 12px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
-.aviso-aprobado { background: #e1f5ee; border: 1px solid #5DCAA5; color: #0f6e56; padding: 12px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
-.aviso-rechazo { background: #fde8e8; border: 1px solid #f5a5a5; color: #c0392b; padding: 12px; border-radius: 8px; font-size: 13px; margin-bottom: 16px; }
-.ubicacion-seccion { margin-top: 20px; padding-top: 20px; border-top: 1px solid #e0e0e0; }
-.ubicacion-desc { font-size: 13px; color: #666; margin-bottom: 12px; }
-.btn-verde {
-  padding: 10px 20px; background: #1D9E75; color: #fff;
-  border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer;
+
+.page-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 32px;
 }
-.btn-verde:disabled { background: #aaa; cursor: not-allowed; }
-.exito { background: #e1f5ee; color: #0f6e56; padding: 10px; border-radius: 8px; font-size: 13px; margin-top: 10px; }
+
+.page-header-inner {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.perfil-top {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.perfil-avatar {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: var(--primary-light);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 22px;
+  font-weight: 700;
+  border: 3px solid var(--border);
+}
+
+.perfil-top h1 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.contenedor {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 28px 32px;
+}
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.seccion {
+  padding: 24px;
+}
+
+.seccion h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 16px;
+}
+
+.seccion-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.seccion-header h3 {
+  margin-bottom: 0;
+}
+
+.info-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.info-item {
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+}
+
+.info-label {
+  display: block;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text2);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.info-val {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.ubicacion-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: 20px;
+  padding: 16px;
+  background: var(--bg);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  flex-wrap: wrap;
+}
+
+.ubicacion-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.ubicacion-desc {
+  font-size: 13px;
+  color: var(--text2);
+}
+
+.stats-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 14px;
+}
+
+.stat-card {
+  padding: 20px;
+  text-align: center;
+}
+
+.stat-num {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.stat-label {
+  font-size: 12px;
+  color: var(--text2);
+  margin-top: 4px;
+}
 </style>

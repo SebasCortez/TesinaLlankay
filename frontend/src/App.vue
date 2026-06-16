@@ -1,17 +1,20 @@
 <template>
   <div id="app">
     <nav class="navbar">
-      <router-link to="/" class="logo">🔧 TécniCusco</router-link>
+      <router-link to="/" class="logo">
+        <div class="logo-icon">🔧</div>
+        <span>TécniCusco</span>
+      </router-link>
       <div class="nav-links">
-        <router-link to="/buscar">Buscar técnicos</router-link>
+        <router-link to="/buscar" class="nav-link">Buscar técnicos</router-link>
         <template v-if="!auth.estaAutenticado">
-          <router-link to="/login">Iniciar sesión</router-link>
-          <router-link to="/registro-cliente" class="btn-nav">Registrarse</router-link>
+          <router-link to="/login" class="nav-link">Iniciar sesión</router-link>
+          <router-link to="/registro-cliente" class="btn-primary">Registrarse</router-link>
         </template>
         <template v-else>
-          <router-link v-if="auth.esAdmin" to="/admin">Panel admin</router-link>
-          <router-link v-if="!auth.esAdmin" to="/solicitudes">Mis solicitudes</router-link>
-          <router-link to="/mi-perfil">Mi perfil</router-link>
+          <router-link v-if="auth.esAdmin" to="/admin" class="nav-link">Panel admin</router-link>
+          <router-link v-if="!auth.esAdmin" to="/solicitudes" class="nav-link">Mis solicitudes</router-link>
+          <router-link to="/mi-perfil" class="nav-link">Mi perfil</router-link>
           <button class="btn-logout" @click="cerrarSesion">Salir</button>
         </template>
       </div>
@@ -34,78 +37,87 @@ function cerrarSesion() {
 </script>
 
 <style>
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
-
-body {
-  font-family: 'Segoe UI', sans-serif;
-  background: #F5F4F0;
-  color: #1A1A18;
-}
-
 #app {
   min-height: 100vh;
 }
 
 .navbar {
-  background: #fff;
-  border-bottom: 1px solid #e0e0e0;
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
   padding: 0 32px;
-  height: 56px;
+  height: 64px;
   display: flex;
   align-items: center;
   justify-content: space-between;
   position: sticky;
   top: 0;
   z-index: 100;
+  box-shadow: var(--shadow);
 }
 
 .logo {
-  font-weight: 700;
-  font-size: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
   text-decoration: none;
-  color: #1A1A18;
+  color: var(--text);
+  font-weight: 700;
+  font-size: 17px;
+  letter-spacing: -0.3px;
+}
+
+.logo-icon {
+  width: 34px;
+  height: 34px;
+  background: var(--primary);
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 16px;
 }
 
 .nav-links {
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 6px;
 }
 
-.nav-links a {
+.nav-link {
+  padding: 7px 14px;
+  border-radius: var(--radius-sm);
   text-decoration: none;
-  color: #555;
+  color: var(--text2);
   font-size: 14px;
   font-weight: 500;
+  transition: all 0.15s;
 }
 
-.nav-links a.router-link-active {
-  color: #1D9E75;
+.nav-link:hover {
+  background: var(--bg);
+  color: var(--text);
 }
 
-.btn-nav {
-  background: #1D9E75;
-  color: #fff !important;
-  padding: 7px 16px;
-  border-radius: 8px;
+.nav-link.router-link-active {
+  color: var(--primary);
+  background: var(--primary-light);
 }
 
 .btn-logout {
-  background: none;
-  border: 1px solid #ccc;
-  padding: 6px 14px;
-  border-radius: 8px;
+  padding: 7px 14px;
+  background: transparent;
+  border: 1.5px solid var(--border2);
+  border-radius: var(--radius-sm);
   font-size: 14px;
+  font-weight: 500;
+  color: var(--text2);
   cursor: pointer;
-  color: #555;
+  font-family: inherit;
+  transition: all 0.15s;
 }
 
 .btn-logout:hover {
-  border-color: #888;
-  color: #1A1A18;
+  border-color: var(--text2);
+  color: var(--text);
 }
 </style>

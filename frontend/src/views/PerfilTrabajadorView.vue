@@ -1,78 +1,121 @@
 <template>
-  <div class="contenedor" v-if="trabajador">
-    <div class="layout">
-      <div class="sidebar">
-        <div class="avatar-big" :style="{ background: getColor(trabajador.id) }">
+  <div class="page" v-if="trabajador">
+    <div class="perfil-header">
+      <div class="perfil-header-inner">
+        <div class="perfil-avatar" :style="{ background: getColor(trabajador.id) }">
           {{ getIniciales(trabajador.usuario.first_name, trabajador.usuario.last_name) }}
         </div>
-        <h2>{{ trabajador.usuario.first_name }} {{ trabajador.usuario.last_name }}</h2>
-        <p class="oficio">{{ trabajador.oficio }}</p>
-        <div class="estrellas">
-          <span v-for="n in 5" :key="n">{{ n <= Math.round(trabajador.calificacion_promedio) ? '⭐' : '☆' }}</span>
-          <span class="cal-num">{{ trabajador.calificacion_promedio.toFixed(1) }} ({{ trabajador.num_calificaciones }} calif.)</span>
+        <div class="perfil-info">
+          <h1>{{ trabajador.usuario.first_name }} {{ trabajador.usuario.last_name }}</h1>
+          <p class="perfil-oficio">{{ trabajador.oficio }}</p>
+          <div class="perfil-meta">
+            <span class="badge badge-blue">{{ trabajador.categoria }}</span>
+            <span class="badge badge-gray">📍 {{ trabajador.usuario.distrito }}, Cusco</span>
+            <span class="badge badge-gray">⏱ {{ trabajador.experiencia }}</span>
+            <span :class="['badge', trabajador.disponible ? 'badge-green' : 'badge-gray']">
+              {{ trabajador.disponible ? '● Disponible' : '● Ocupado' }}
+            </span>
+          </div>
         </div>
-        <div class="info">
-          <div>📍 {{ trabajador.usuario.distrito }}, Cusco</div>
-          <div>📱 {{ trabajador.usuario.celular }}</div>
-          <div>🏷 {{ trabajador.categoria }}</div>
-          <div>⏱ {{ trabajador.experiencia }}</div>
-          <div>✅ Verificado</div>
-          <router-link
-            v-if="auth.esCliente"
-            :to="`/trabajador/${trabajador.id}/solicitar`"
-            class="btn-solicitar"
-            >
-            📩 Solicitar servicio
-          </router-link>
-        </div>
-        <div v-if="trabajador.descripcion" class="descripcion">
-          {{ trabajador.descripcion }}
+        <div class="perfil-rating">
+          <div class="rating-num">{{ trabajador.calificacion_promedio.toFixed(1) }}</div>
+          <div class="rating-stars">
+            <span v-for="n in 5" :key="n">{{ n <= Math.round(trabajador.calificacion_promedio) ? '⭐' : '☆' }}</span>
+          </div>
+          <div class="rating-count">{{ trabajador.num_calificaciones }} calificaciones</div>
         </div>
       </div>
+    </div>
 
-      <div class="main">
-        <div class="calificaciones-seccion">
+    <div class="perfil-body">
+      <div class="perfil-main">
+
+        <!-- Descripción -->
+        <div class="card seccion" v-if="trabajador.descripcion">
+          <h3>Sobre mí</h3>
+          <p class="descripcion-txt">{{ trabajador.descripcion }}</p>
+        </div>
+
+        <!-- Contacto -->
+        <div class="card seccion">
+          <h3>Información de contacto</h3>
+          <div class="contact-grid">
+            <div class="contact-item">
+              <span class="contact-icon">📱</span>
+              <div>
+                <div class="contact-label">Celular</div>
+                <div class="contact-val">{{ trabajador.usuario.celular }}</div>
+              </div>
+            </div>
+            <div class="contact-item">
+              <span class="contact-icon">📧</span>
+              <div>
+                <div class="contact-label">Correo</div>
+                <div class="contact-val">{{ trabajador.usuario.email }}</div>
+              </div>
+            </div>
+          </div>
+          <router-link v-if="auth.esCliente" :to="`/trabajador/${trabajador.id}/solicitar`" class="btn-primary"
+            style="width:100%;justify-content:center;margin-top:16px;padding:12px">
+            📩 Solicitar servicio
+          </router-link>
+          <div v-if="!auth.estaAutenticado" class="aviso-login">
+            <router-link to="/login">Inicia sesión</router-link> para solicitar este servicio
+          </div>
+        </div>
+
+        <!-- Calificaciones -->
+        <div class="card seccion">
           <h3>Calificaciones ({{ calificaciones.length }})</h3>
 
-          <!-- Formulario de calificación -->
+          <!-- Formulario -->
           <div v-if="auth.esCliente" class="form-cal">
-            <p class="form-title">Deja tu calificación</p>
-            <div class="estrellas-input">
-              <span
-                v-for="n in 5" :key="n"
-                @click="nuevaCal.puntuacion = n"
-                :class="['estrella', n <= nuevaCal.puntuacion ? 'activa' : '']"
-              >★</span>
+            <p class="form-cal-title">Deja tu calificación</p>
+            <div class="stars-input">
+              <span v-for="n in 5" :key="n" @click="nuevaCal.puntuacion = n" @mouseover="hover = n"
+                @mouseleave="hover = 0"
+                :class="['star-btn', n <= (hover || nuevaCal.puntuacion) ? 'activa' : '']">★</span>
+              <span class="star-label" v-if="nuevaCal.puntuacion">{{ starLabels[nuevaCal.puntuacion - 1] }}</span>
             </div>
-            <textarea v-model="nuevaCal.comentario" placeholder="Escribe tu comentario..." rows="3"></textarea>
-            <div v-if="errorCal" class="error">{{ errorCal }}</div>
-            <div v-if="exitoCal" class="exito">{{ exitoCal }}</div>
-            <button class="btn-verde" @click="calificar" :disabled="cargandoCal">
+            <textarea v-model="nuevaCal.comentario" class="form-textarea"
+              placeholder="Cuéntanos tu experiencia con este técnico..." rows="3" style="margin-top:10px"></textarea>
+            <div v-if="errorCal" class="alert alert-error" style="margin-top:10px">{{ errorCal }}</div>
+            <div v-if="exitoCal" class="alert alert-success" style="margin-top:10px">{{ exitoCal }}</div>
+            <button class="btn-primary" style="margin-top:12px" @click="calificar" :disabled="cargandoCal">
               {{ cargandoCal ? 'Enviando...' : 'Enviar calificación' }}
             </button>
           </div>
 
-          <div v-if="!auth.esCliente && !auth.estaAutenticado" class="aviso">
+          <div v-if="!auth.estaAutenticado" class="aviso-login">
             <router-link to="/login">Inicia sesión</router-link> como cliente para dejar una calificación
           </div>
 
-          <div v-if="calificaciones.length === 0" class="sin-cal">Aún no hay calificaciones</div>
+          <div v-if="calificaciones.length === 0" class="sin-cal">
+            <div style="font-size:32px;margin-bottom:8px">⭐</div>
+            <p>Aún no hay calificaciones para este técnico</p>
+          </div>
 
-          <div v-for="c in calificaciones" :key="c.id" class="review">
-            <div class="review-top">
-              <strong>{{ c.cliente.first_name }} {{ c.cliente.last_name }}</strong>
-              <div class="estrellas">
+          <div v-for="c in calificaciones" :key="c.id" class="review-item">
+            <div class="review-header">
+              <div class="review-avatar">{{ c.cliente.first_name[0] }}{{ c.cliente.last_name[0] }}</div>
+              <div>
+                <div class="review-name">{{ c.cliente.first_name }} {{ c.cliente.last_name }}</div>
+                <div class="review-date">{{ formatFecha(c.fecha) }}</div>
+              </div>
+              <div class="review-stars">
                 <span v-for="n in 5" :key="n">{{ n <= c.puntuacion ? '⭐' : '☆' }}</span>
               </div>
-              <span class="fecha">{{ formatFecha(c.fecha) }}</span>
             </div>
-            <p v-if="c.comentario" class="comentario">{{ c.comentario }}</p>
+            <p v-if="c.comentario" class="review-comment">{{ c.comentario }}</p>
           </div>
         </div>
       </div>
     </div>
   </div>
-  <div v-else class="estado">Cargando...</div>
+  <div v-else class="estado-carga">
+    <div class="spinner"></div>
+    <p>Cargando perfil...</p>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -88,32 +131,33 @@ const calificaciones = ref<any[]>([])
 const errorCal = ref('')
 const exitoCal = ref('')
 const cargandoCal = ref(false)
+const hover = ref(0)
 const nuevaCal = ref({ puntuacion: 0, comentario: '' })
+const starLabels = ['Malo', 'Regular', 'Bueno', 'Muy bueno', 'Excelente']
 
 function getIniciales(nombre: string, apellido: string) {
   return (nombre?.[0] || '') + (apellido?.[0] || '')
 }
 function getColor(id: number) {
-  const colores = ['#c8eed9','#d4edba','#fde8c8','#d6e8f8','#f8d6e8','#e8d6f8']
+  const colores = ['#DBEAFE', '#D1FAE5', '#FEF3C7', '#FCE7F3', '#EDE9FE', '#FFEDD5']
   return colores[id % colores.length]
 }
 function formatFecha(fecha: string) {
-  return new Date(fecha).toLocaleDateString('es-PE', { year:'numeric', month:'long', day:'numeric' })
+  return new Date(fecha).toLocaleDateString('es-PE', { year: 'numeric', month: 'long', day: 'numeric' })
 }
 
 async function cargarDatos() {
   const id = route.params.id
-  const [resTrabajador, resCal] = await Promise.all([
+  const [r1, r2] = await Promise.all([
     axios.get(`http://127.0.0.1:8000/api/trabajadores/${id}/`),
     axios.get(`http://127.0.0.1:8000/api/calificaciones/${id}/`)
   ])
-  trabajador.value = resTrabajador.data
-  calificaciones.value = resCal.data
+  trabajador.value = r1.data
+  calificaciones.value = r2.data
 }
 
 async function calificar() {
-  if (nuevaCal.value.puntuacion === 0)
-    return errorCal.value = 'Selecciona una puntuación'
+  if (nuevaCal.value.puntuacion === 0) return errorCal.value = 'Selecciona una puntuación'
   errorCal.value = ''
   cargandoCal.value = true
   try {
@@ -122,7 +166,7 @@ async function calificar() {
       puntuacion: nuevaCal.value.puntuacion,
       comentario: nuevaCal.value.comentario,
     })
-    exitoCal.value = '¡Calificación enviada!'
+    exitoCal.value = '✅ ¡Calificación enviada exitosamente!'
     nuevaCal.value = { puntuacion: 0, comentario: '' }
     await cargarDatos()
   } catch (e: any) {
@@ -136,59 +180,281 @@ onMounted(() => cargarDatos())
 </script>
 
 <style scoped>
-.contenedor { max-width: 1000px; margin: 0 auto; padding: 24px; }
-.layout { display: grid; grid-template-columns: 280px 1fr; gap: 20px; align-items: start; }
-.sidebar {
-  background: #fff; border: 1px solid #e0e0e0;
-  border-radius: 12px; padding: 24px; text-align: center;
+.page {
+  min-height: calc(100vh - 64px);
 }
-.avatar-big {
-  width: 80px; height: 80px; border-radius: 50%;
-  display: flex; align-items: center; justify-content: center;
-  font-size: 28px; font-weight: 700; margin: 0 auto 14px;
+
+.perfil-header {
+  background: var(--surface);
+  border-bottom: 1px solid var(--border);
+  padding: 32px;
 }
-h2 { font-size: 18px; font-weight: 700; }
-.oficio { color: #1D9E75; font-weight: 500; font-size: 14px; margin: 4px 0 10px; }
-.estrellas { font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 2px; }
-.cal-num { font-size: 12px; color: #888; margin-left: 4px; }
-.info { text-align: left; margin-top: 16px; display: flex; flex-direction: column; gap: 8px; font-size: 13px; color: #555; }
-.descripcion { background: #f8f7f4; border-radius: 8px; padding: 12px; margin-top: 14px; font-size: 13px; color: #555; text-align: left; line-height: 1.6; }
-.main { background: #fff; border: 1px solid #e0e0e0; border-radius: 12px; padding: 24px; }
-.calificaciones-seccion h3 { font-size: 16px; font-weight: 700; margin-bottom: 16px; }
-.form-cal { background: #f8f7f4; border-radius: 10px; padding: 16px; margin-bottom: 20px; }
-.form-title { font-size: 14px; font-weight: 600; margin-bottom: 10px; }
-.estrellas-input { display: flex; gap: 6px; margin-bottom: 10px; }
-.estrella { font-size: 28px; cursor: pointer; color: #ddd; transition: color 0.15s; }
-.estrella.activa { color: #EF9F27; }
-.estrella:hover { color: #EF9F27; }
-textarea {
-  width: 100%; padding: 10px 12px;
-  border: 1px solid #ccc; border-radius: 8px;
-  font-size: 14px; font-family: inherit; outline: none; resize: vertical;
+
+.perfil-header-inner {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
 }
-textarea:focus { border-color: #1D9E75; }
-.btn-verde {
-  margin-top: 10px; padding: 9px 20px;
-  background: #1D9E75; color: #fff;
-  border: none; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;
+
+.perfil-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  font-weight: 700;
+  flex-shrink: 0;
+  border: 3px solid var(--border);
 }
-.btn-verde:disabled { background: #aaa; cursor: not-allowed; }
-.aviso { font-size: 13px; color: #666; margin-bottom: 16px; }
-.aviso a { color: #1D9E75; }
-.sin-cal { text-align: center; padding: 24px; color: #888; font-size: 14px; }
-.review { padding: 14px 0; border-bottom: 1px solid #f0eeea; }
-.review:last-child { border-bottom: none; }
-.review-top { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; flex-wrap: wrap; }
-.fecha { font-size: 11px; color: #aaa; margin-left: auto; }
-.comentario { font-size: 13px; color: #555; line-height: 1.6; }
-.error { background: #fde8e8; color: #c0392b; padding: 8px 10px; border-radius: 8px; font-size: 13px; margin: 8px 0; }
-.exito { background: #e1f5ee; color: #0f6e56; padding: 8px 10px; border-radius: 8px; font-size: 13px; margin: 8px 0; }
-.estado { text-align: center; padding: 48px; color: #888; }
-.btn-solicitar {
-  display: block; text-align: center; margin-top: 16px;
-  padding: 11px; background: #1D9E75; color: #fff;
-  border-radius: 8px; text-decoration: none;
-  font-size: 14px; font-weight: 600;
+
+.perfil-info {
+  flex: 1;
 }
-.btn-solicitar:hover { background: #0f6e56; }
+
+.perfil-info h1 {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+
+.perfil-oficio {
+  color: var(--primary);
+  font-weight: 500;
+  font-size: 15px;
+  margin-bottom: 10px;
+}
+
+.perfil-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.perfil-rating {
+  text-align: center;
+  padding: 16px 24px;
+  background: var(--bg);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+}
+
+.rating-num {
+  font-size: 36px;
+  font-weight: 700;
+  color: var(--text);
+  line-height: 1;
+}
+
+.rating-stars {
+  font-size: 16px;
+  margin: 4px 0;
+}
+
+.rating-count {
+  font-size: 12px;
+  color: var(--text2);
+}
+
+.perfil-body {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 28px 32px;
+}
+
+.perfil-main {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.seccion {
+  padding: 24px;
+}
+
+.seccion h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  color: var(--text);
+}
+
+.descripcion-txt {
+  font-size: 14px;
+  color: var(--text2);
+  line-height: 1.7;
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+.contact-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background: var(--bg);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+}
+
+.contact-icon {
+  font-size: 20px;
+}
+
+.contact-label {
+  font-size: 11px;
+  color: var(--text2);
+  font-weight: 500;
+}
+
+.contact-val {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+
+.aviso-login {
+  font-size: 13px;
+  color: var(--text2);
+  margin-top: 12px;
+}
+
+.aviso-login a {
+  color: var(--primary);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.form-cal {
+  background: var(--bg);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 20px;
+  border: 1px solid var(--border);
+}
+
+.form-cal-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.stars-input {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.star-btn {
+  font-size: 32px;
+  cursor: pointer;
+  color: var(--border2);
+  transition: color 0.1s;
+  line-height: 1;
+}
+
+.star-btn.activa {
+  color: #F59E0B;
+}
+
+.star-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text2);
+  margin-left: 4px;
+}
+
+.sin-cal {
+  text-align: center;
+  padding: 32px;
+  color: var(--text2);
+  font-size: 14px;
+}
+
+.review-item {
+  padding: 16px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.review-item:last-child {
+  border-bottom: none;
+  padding-bottom: 0;
+}
+
+.review-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.review-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--primary-light);
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+.review-name {
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.review-date {
+  font-size: 11px;
+  color: var(--text3);
+  margin-top: 1px;
+}
+
+.review-stars {
+  margin-left: auto;
+  font-size: 13px;
+}
+
+.review-comment {
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.6;
+  padding-left: 48px;
+}
+
+.estado-carga {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px;
+  color: var(--text2);
+  gap: 16px;
+}
+
+.spinner {
+  width: 36px;
+  height: 36px;
+  border: 3px solid var(--border);
+  border-top-color: var(--primary);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
 </style>
