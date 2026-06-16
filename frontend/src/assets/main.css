@@ -20,12 +20,41 @@
   --amber-light: #FFFBEB;
   --radius: 12px;
   --radius-sm: 8px;
-  --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.04);
-  --shadow-md: 0 4px 6px rgba(0,0,0,0.07), 0 2px 4px rgba(0,0,0,0.05);
-  --shadow-lg: 0 10px 15px rgba(0,0,0,0.08), 0 4px 6px rgba(0,0,0,0.04);
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.08), 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07), 0 2px 4px rgba(0, 0, 0, 0.05);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.08), 0 4px 6px rgba(0, 0, 0, 0.04);
 }
 
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+[data-theme="dark"] {
+  --primary: #3B82F6;
+  --primary-dark: #2563EB;
+  --primary-light: #1E3A5F;
+  --primary-mid: #60A5FA;
+  --text: #F9FAFB;
+  --text2: #9CA3AF;
+  --text3: #6B7280;
+  --bg: #111827;
+  --surface: #1F2937;
+  --border: #374151;
+  --border2: #4B5563;
+  --green: #10B981;
+  --green-light: #064E3B;
+  --red: #EF4444;
+  --red-light: #450A0A;
+  --amber: #F59E0B;
+  --amber-light: #451A03;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3), 0 2px 4px rgba(0, 0, 0, 0.2);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.4), 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
 body {
   font-family: 'Inter', system-ui, sans-serif;
@@ -52,9 +81,19 @@ body {
   align-items: center;
   gap: 6px;
 }
-.btn-primary:hover { background: var(--primary-dark); }
-.btn-primary:active { transform: scale(0.98); }
-.btn-primary:disabled { background: var(--border2); cursor: not-allowed; }
+
+.btn-primary:hover {
+  background: var(--primary-dark);
+}
+
+.btn-primary:active {
+  transform: scale(0.98);
+}
+
+.btn-primary:disabled {
+  background: var(--border2);
+  cursor: not-allowed;
+}
 
 .btn-secondary {
   background: var(--surface);
@@ -68,7 +107,10 @@ body {
   font-family: inherit;
   transition: all 0.15s;
 }
-.btn-secondary:hover { border-color: var(--text2); }
+
+.btn-secondary:hover {
+  border-color: var(--text2);
+}
 
 .btn-danger {
   background: var(--red);
@@ -81,10 +123,16 @@ body {
   cursor: pointer;
   font-family: inherit;
 }
-.btn-danger:hover { background: #DC2626; }
+
+.btn-danger:hover {
+  background: #DC2626;
+}
 
 /* FORMULARIOS GLOBALES */
-.form-group { margin-bottom: 16px; }
+.form-group {
+  margin-bottom: 16px;
+}
+
 .form-label {
   display: block;
   font-size: 13px;
@@ -92,7 +140,10 @@ body {
   color: var(--text2);
   margin-bottom: 6px;
 }
-.form-input, .form-select, .form-textarea {
+
+.form-input,
+.form-select,
+.form-textarea {
   width: 100%;
   padding: 10px 14px;
   border: 1.5px solid var(--border);
@@ -104,11 +155,17 @@ body {
   outline: none;
   transition: border-color 0.15s, box-shadow 0.15s;
 }
-.form-input:focus, .form-select:focus, .form-textarea:focus {
+
+.form-input:focus,
+.form-select:focus,
+.form-textarea:focus {
   border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
 }
-.form-textarea { resize: vertical; }
+
+.form-textarea {
+  resize: vertical;
+}
 
 /* ALERTAS */
 .alert {
@@ -118,9 +175,24 @@ body {
   font-weight: 500;
   margin-bottom: 16px;
 }
-.alert-error { background: var(--red-light); color: #B91C1C; border: 1px solid #FECACA; }
-.alert-success { background: var(--green-light); color: #065F46; border: 1px solid #A7F3D0; }
-.alert-warning { background: var(--amber-light); color: #92400E; border: 1px solid #FDE68A; }
+
+.alert-error {
+  background: var(--red-light);
+  color: #B91C1C;
+  border: 1px solid #FECACA;
+}
+
+.alert-success {
+  background: var(--green-light);
+  color: #065F46;
+  border: 1px solid #A7F3D0;
+}
+
+.alert-warning {
+  background: var(--amber-light);
+  color: #92400E;
+  border: 1px solid #FDE68A;
+}
 
 /* BADGES */
 .badge {
@@ -132,11 +204,31 @@ body {
   font-size: 12px;
   font-weight: 600;
 }
-.badge-green { background: var(--green-light); color: #065F46; }
-.badge-blue { background: var(--primary-light); color: var(--primary-dark); }
-.badge-amber { background: var(--amber-light); color: #92400E; }
-.badge-red { background: var(--red-light); color: #B91C1C; }
-.badge-gray { background: #F3F4F6; color: var(--text2); }
+
+.badge-green {
+  background: var(--green-light);
+  color: #065F46;
+}
+
+.badge-blue {
+  background: var(--primary-light);
+  color: var(--primary-dark);
+}
+
+.badge-amber {
+  background: var(--amber-light);
+  color: #92400E;
+}
+
+.badge-red {
+  background: var(--red-light);
+  color: #B91C1C;
+}
+
+.badge-gray {
+  background: #F3F4F6;
+  color: var(--text2);
+}
 
 /* CARDS */
 .card {
@@ -160,4 +252,90 @@ body {
   border: none;
   border-top: 1px solid var(--border);
   margin: 20px 0;
+}
+
+/* CORRECCIONES MODO OSCURO */
+[data-theme="dark"] .badge-green {
+  background: #064E3B;
+  color: #6EE7B7;
+}
+
+[data-theme="dark"] .badge-blue {
+  background: #1E3A5F;
+  color: #93C5FD;
+}
+
+[data-theme="dark"] .badge-gray {
+  background: #374151;
+  color: #D1D5DB;
+}
+
+[data-theme="dark"] .badge-amber {
+  background: #451A03;
+  color: #FCD34D;
+}
+
+[data-theme="dark"] .badge-red {
+  background: #450A0A;
+  color: #FCA5A5;
+}
+
+[data-theme="dark"] select,
+[data-theme="dark"] input,
+[data-theme="dark"] textarea {
+  background: #374151;
+  color: #F9FAFB;
+  border-color: #4B5563;
+}
+
+[data-theme="dark"] select option {
+  background: #1F2937;
+  color: #F9FAFB;
+}
+
+[data-theme="dark"] .search-select {
+  background: #374151;
+  color: #F9FAFB;
+}
+
+[data-theme="dark"] .alert-success {
+  background: #064E3B;
+  color: #6EE7B7;
+  border-color: #065F46;
+}
+
+[data-theme="dark"] .alert-error {
+  background: #450A0A;
+  color: #FCA5A5;
+  border-color: #991B1B;
+}
+
+[data-theme="dark"] .alert-warning {
+  background: #451A03;
+  color: #FCD34D;
+  border-color: #92400E;
+}
+
+[data-theme="dark"] .btn-secondary {
+  background: #374151;
+  color: #F9FAFB;
+  border-color: #4B5563;
+}
+
+[data-theme="dark"] .btn-secondary:hover {
+  background: #4B5563;
+}
+
+[data-theme="dark"] .vista-btn {
+  color: #9CA3AF;
+}
+
+[data-theme="dark"] .vista-btn.active {
+  background: #374151;
+  color: #F9FAFB;
+}
+
+[data-theme="dark"] .vista-btns {
+  background: #111827;
+  border-color: #374151;
 }

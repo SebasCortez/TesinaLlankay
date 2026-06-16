@@ -17,4 +17,8 @@ if (token) {
   axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
 }
 
+import { useThemeStore } from './stores/theme'
+const theme = useThemeStore()
+theme.init()
+
 app.mount('#app')   

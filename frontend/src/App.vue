@@ -7,6 +7,9 @@
       </router-link>
       <div class="nav-links">
         <router-link to="/buscar" class="nav-link">Buscar técnicos</router-link>
+        <button class="btn-theme" @click="theme.toggle()" :title="theme.dark ? 'Modo claro' : 'Modo oscuro'">
+          {{ theme.dark ? '☀️' : '🌙' }}
+        </button>
         <template v-if="!auth.estaAutenticado">
           <router-link to="/login" class="nav-link">Iniciar sesión</router-link>
           <router-link to="/registro-cliente" class="btn-primary">Registrarse</router-link>
@@ -26,6 +29,9 @@
 <script setup lang="ts">
 import { useAuthStore } from './stores/auth'
 import { useRouter } from 'vue-router'
+import { useThemeStore } from './stores/theme'
+const theme = useThemeStore()
+
 
 const auth = useAuthStore()
 const router = useRouter()
@@ -120,4 +126,15 @@ function cerrarSesion() {
   border-color: var(--text2);
   color: var(--text);
 }
+.btn-theme {
+  width: 36px; height: 36px;
+  border-radius: var(--radius-sm);
+  border: 1.5px solid var(--border2);
+  background: transparent;
+  font-size: 16px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all 0.15s;
+}
+.btn-theme:hover { background: var(--bg); }
 </style>
