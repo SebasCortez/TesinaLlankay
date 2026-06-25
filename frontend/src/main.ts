@@ -5,6 +5,7 @@ import App from './App.vue'
 import router from './router'
 import axios from 'axios'
 
+
 const app = createApp(App)
 const pinia = createPinia()
 
@@ -20,5 +21,9 @@ if (token) {
 import { useThemeStore } from './stores/theme'
 const theme = useThemeStore()
 theme.init()
+
+import { registerSW } from 'virtual:pwa-register'
+
+registerSW({ immediate: true })
 
 app.mount('#app')   
