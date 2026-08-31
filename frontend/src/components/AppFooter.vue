@@ -19,15 +19,11 @@
             <div class="footer-address-box">
               <div class="fab-row">
                 <span class="fab-icon">📍</span>
-                <span>Av. de la Cultura 733, Wanchaq, Cusco 08002, Perú</span>
-              </div>
-              <div class="fab-row">
-                <span class="fab-icon">📞</span>
-                <span>+51 984 123 456 · (084) 240011</span>
+                <span>Plataforma 100% Digital · Cusco, Perú</span>
               </div>
               <div class="fab-row">
                 <span class="fab-icon">✉️</span>
-                <span>contacto@llankay.pe</span>
+                <a href="mailto:proyectollankay@gmail.com" class="footer-email-link">proyectollankay@gmail.com</a>
               </div>
             </div>
           </div>
@@ -70,9 +66,9 @@
                 </a>
               </li>
               <li>
-                <a href="https://wa.me/51984123456" target="_blank" rel="noopener noreferrer" class="whatsapp-link">
-                  💬 WhatsApp de Guardia
-                </a>
+                <router-link to="/contacto">
+                  ✉️ Atención al Usuario
+                </router-link>
               </li>
             </ul>
 

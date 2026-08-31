@@ -143,8 +143,8 @@ const router = createRouter({
       name: 'Contacto',
       component: () => import('../views/ContactoView.vue'),
       meta: {
-        title: 'Contacto y Sede en Cusco | Llankay',
-        description: 'Comunícate con nuestra central en Wanchaq, Cusco, teléfonos o vía WhatsApp directo.'
+        title: 'Contacto y Atención al Usuario | Llankay',
+        description: 'Canal de atención y soporte oficial de Llankay por correo electrónico: proyectollankay@gmail.com.'
       }
     },
     {

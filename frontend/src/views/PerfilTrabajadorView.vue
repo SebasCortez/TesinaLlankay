@@ -70,7 +70,7 @@
           <!-- Botones de Acción -->
           <div class="acciones-contacto">
             <a v-if="trabajador.usuario.celular"
-               :href="`https://wa.me/51${trabajador.usuario.celular.replace(/\D/g, '')}?text=Hola%20${encodeURIComponent(trabajador.usuario.first_name)},%20te%20contacto%20desde%20T%C3%A9cniCusco%20para%20un%20servicio%20de%20${encodeURIComponent(trabajador.oficio)}.`"
+               :href="`https://wa.me/51${trabajador.usuario.celular.replace(/\D/g, '')}?text=Hola%20${encodeURIComponent(trabajador.usuario.first_name)},%20te%20contacto%20desde%20Llankay%20para%20un%20servicio%20de%20${encodeURIComponent(trabajador.oficio)}.`"
                target="_blank"
                rel="noopener noreferrer"
                class="btn-whatsapp">

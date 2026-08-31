@@ -46,7 +46,7 @@
         </div>
 
         <p class="gracias-contacto">
-          ¿Dudas urgentes? Comunícate por WhatsApp al <a href="https://wa.me/51984123456" target="_blank" rel="noopener noreferrer">+51 984 123 456</a>
+          ¿Dudas o consultas? Escríbenos directamente a <a href="mailto:proyectollankay@gmail.com">proyectollankay@gmail.com</a>
         </p>
       </div>
     </div>
@@ -73,7 +73,7 @@ const titulo = computed(() => {
 
 const descripcion = computed(() => {
   if (tipo.value === 'contacto') {
-    return `Hemos recibido tu mensaje${nombre.value ? ', ' + nombre.value : ''}. Nuestro equipo de atención en Cusco te responderá a la brevedad.`
+    return `Hemos recibido tu mensaje${nombre.value ? ', ' + nombre.value : ''}. Te responderemos a tu correo a la brevedad.`
   }
   if (tipo.value === 'registro') {
     return 'Tu cuenta ha sido creada exitosamente. Ya puedes buscar técnicos o gestionar tus servicios en Cusco.'
@@ -84,8 +84,8 @@ const descripcion = computed(() => {
 const proximosPasos = computed(() => {
   if (tipo.value === 'contacto') {
     return [
-      { titulo: 'Revisión por soporte', desc: 'Un asesor en Cusco revisará tu mensaje y requerimientos.' },
-      { titulo: 'Respuesta rápida', desc: 'Te contactaremos por correo o WhatsApp en menos de 2 horas hábiles.' },
+      { titulo: 'Revisión por soporte', desc: 'Nuestro equipo revisará tu mensaje y requerimientos.' },
+      { titulo: 'Respuesta por correo', desc: 'Te responderemos por correo electrónico a la brevedad.' },
       { titulo: 'Solución a tu consulta', desc: 'Brindaremos seguimiento hasta que tu duda quede resuelta.' },
     ]
   }

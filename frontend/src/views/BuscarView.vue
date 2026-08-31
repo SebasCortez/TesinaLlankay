@@ -130,9 +130,9 @@
                 <router-link to="/registro-cliente" class="btn-secondary">
                   Crear cuenta gratis
                 </router-link>
-                <a :href="`https://wa.me/51984123456?text=Hola%20T%C3%A9cniCusco,%20estoy%20buscando%20un%20servicio%20de%20${encodeURIComponent(busqueda || 'un oficio no listado')}`" target="_blank" rel="noopener noreferrer" class="btn-whatsapp-sm">
-                  💬 Consultar por WhatsApp
-                </a>
+                <router-link to="/contacto" class="btn-secondary">
+                  ✉️ Consultar por Correo
+                </router-link>
               </div>
             </div>
 
@@ -212,9 +212,9 @@
                 <button class="btn-primary" @click="enviarPedidoEspecial" :disabled="enviandoPedido">
                   {{ enviandoPedido ? 'Guardando requerimiento en sistema...' : 'Registrar requerimiento de servicio ➔' }}
                 </button>
-                <a :href="`https://wa.me/51984123456?text=Hola%20T%C3%A9cniCusco,%20soy%20${encodeURIComponent(formPedido.nombre || auth.usuario?.first_name || 'un usuario registrado')}%20y%20estoy%20buscando%20un%20servicio%20de%20${encodeURIComponent(formPedido.oficio || busqueda || 'un oficio no listado')}%20en%20${encodeURIComponent(formPedido.distrito)}`" target="_blank" rel="noopener noreferrer" class="btn-whatsapp-sm">
-                  💬 Consultar por WhatsApp
-                </a>
+                <router-link to="/contacto" class="btn-secondary">
+                  ✉️ Ayuda por Correo
+                </router-link>
               </div>
             </div>
           </div>
@@ -276,14 +276,11 @@
               <span class="boo-icon">💡</span>
               <div>
                 <strong>¿Buscas una especialidad o trabajo técnico diferente?</strong>
-                <p>Si requieres un servicio no catalogado, puedes dejarnos tu requerimiento o consultarnos vía WhatsApp.</p>
+                <p>Si requieres un servicio no catalogado, puedes dejarnos tu requerimiento o consultarnos por correo oficial.</p>
               </div>
             </div>
             <div class="boo-actions">
-              <router-link to="/contacto" class="btn-secondary btn-sm">Contactar con soporte</router-link>
-              <a href="https://wa.me/51984123456?text=Hola%20T%C3%A9cniCusco,%20busco%20un%20servicio%20t%C3%A9cnico%20especial%20en%20Cusco" target="_blank" rel="noopener noreferrer" class="btn-whatsapp-sm">
-                💬 WhatsApp
-              </a>
+              <router-link to="/contacto" class="btn-primary btn-sm">✉️ Escribir a Soporte</router-link>
             </div>
           </div>
         </div>
@@ -413,7 +410,7 @@ async function enviarPedidoEspecial() {
       formPedido.value.descripcion = ''
     }, 4500)
   } catch (err: any) {
-    msgPedidoError.value = err.response?.data?.error || err.response?.data?.detail || 'No se pudo registrar el requerimiento. Por favor intenta de nuevo o contáctanos por WhatsApp.'
+    msgPedidoError.value = err.response?.data?.error || err.response?.data?.detail || 'No se pudo registrar el requerimiento. Por favor intenta de nuevo o escríbenos a proyectollankay@gmail.com.'
   } finally {
     enviandoPedido.value = false
   }

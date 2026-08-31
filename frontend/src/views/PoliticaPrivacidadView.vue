@@ -29,28 +29,21 @@
         <section class="legal-section">
           <h2>1. Identidad y Domicilio del Responsable del Banco de Datos</h2>
           <p>
-            El banco de datos personales de la plataforma es administrado por <strong>Llankay</strong>, con domicilio legal en:
+            El banco de datos personales de la plataforma es administrado por <strong>Llankay</strong>, operando como plataforma digital en la región del Cusco, Perú:
           </p>
           <div class="contact-box">
             <div class="cb-item">
               <span class="cb-icon">📍</span>
               <div>
-                <strong>Dirección Principal:</strong>
-                <p>Av. de la Cultura 733, Wanchaq, Cusco 08002, Perú</p>
+                <strong>Ámbito y Cobertura:</strong>
+                <p>Plataforma Digital · Cusco, Perú</p>
               </div>
             </div>
             <div class="cb-item">
               <span class="cb-icon">✉️</span>
               <div>
-                <strong>Correo de Privacidad & ARCO:</strong>
-                <p><a href="mailto:privacidad@llankay.pe">privacidad@llankay.pe</a></p>
-              </div>
-            </div>
-            <div class="cb-item">
-              <span class="cb-icon">📞</span>
-              <div>
-                <strong>Teléfono de Atención:</strong>
-                <p>+51 984 123 456 · (084) 240011</p>
+                <strong>Correo Oficial de Contacto & ARCO:</strong>
+                <p><a href="mailto:proyectollankay@gmail.com">proyectollankay@gmail.com</a></p>
               </div>
             </div>
           </div>
@@ -137,7 +130,7 @@
             </div>
           </div>
           <p class="arco-instruct">
-            Para ejercer cualquiera de tus derechos ARCO, envía un correo a <a href="mailto:privacidad@llankay.pe">privacidad@llankay.pe</a> con el asunto <em>"Ejercicio de Derechos ARCO - [Tu Nombre]"</em> adjuntando una copia de tu DNI o documento de identidad. Responderemos a tu solicitud en los plazos estipulados por la ley peruana.
+            Para ejercer cualquiera de tus derechos ARCO, envía un correo a <a href="mailto:proyectollankay@gmail.com">proyectollankay@gmail.com</a> con el asunto <em>"Ejercicio de Derechos ARCO - [Tu Nombre]"</em> adjuntando una copia de tu DNI o documento de identidad. Responderemos a tu solicitud en los plazos estipulados por la ley peruana.
           </p>
         </section>
 

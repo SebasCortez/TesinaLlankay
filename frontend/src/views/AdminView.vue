@@ -230,7 +230,7 @@
             <div class="req-footer">
               <div class="req-actions-btns">
                 <a 
-                  :href="`https://wa.me/51${r.celular_contacto.replace(/\D/g, '')}?text=Hola%20${encodeURIComponent(r.nombre_contacto)},%20te%20escribimos%20de%20T%C3%A9cniCusco%20respecto%20a%20tu%20solicitud%20para%20un%20servicio%20de%20${encodeURIComponent(r.oficio_solicitado)}%20en%20${encodeURIComponent(r.distrito)}.`" 
+                  :href="`https://wa.me/51${r.celular_contacto.replace(/\D/g, '')}?text=Hola%20${encodeURIComponent(r.nombre_contacto)},%20te%20escribimos%20de%20Llankay%20respecto%20a%20tu%20solicitud%20para%20un%20servicio%20de%20${encodeURIComponent(r.oficio_solicitado)}%20en%20${encodeURIComponent(r.distrito)}.`" 
                   target="_blank" 
                   rel="noopener noreferrer"
                   class="btn-whatsapp-sm"

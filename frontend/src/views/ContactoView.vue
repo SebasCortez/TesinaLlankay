@@ -5,10 +5,10 @@
       <div class="header-glow"></div>
       <div class="header-content">
         <div class="contacto-badge">
-          <span>📍 Sede Central Cusco, Perú</span>
+          <span>💻 Plataforma 100% Digital · Cusco, Perú</span>
         </div>
         <h1>Contáctanos y Atención al Cliente</h1>
-        <p>¿Tienes dudas sobre un servicio técnico, necesitas soporte con tu cuenta o requieres atención para tu empresa?</p>
+        <p>¿Tienes dudas sobre un servicio técnico, necesitas soporte con tu cuenta o requieres información del proyecto?</p>
       </div>
     </div>
 
@@ -16,74 +16,65 @@
     <div class="contacto-container">
       <div class="contacto-grid">
 
-        <!-- COLUMNA IZQUIERDA: INFORMACIÓN REAL Y SEDE -->
+        <!-- COLUMNA IZQUIERDA: INFORMACIÓN Y CORREO OFICIAL -->
         <div class="info-column">
           <div class="card info-card">
-            <h3>📍 Oficinas y Atención Presencial</h3>
-            <p class="info-desc">Visítanos o comunícate con nuestro equipo en la ciudad del Cusco.</p>
+            <h3>📧 Canal de Atención Oficial</h3>
+            <p class="info-desc">Somos una plataforma 100% digital. Atendemos todas tus consultas y solicitudes por correo electrónico.</p>
 
             <div class="info-items">
               <div class="info-item">
-                <div class="info-icon">🏢</div>
-                <div>
-                  <strong>Dirección Real:</strong>
-                  <p>Av. de la Cultura 733, Wanchaq, Cusco 08002, Perú</p>
-                  <span class="info-hint">(Frente a la UNSAAC / A 2 cuadras de Plaza Túpac Amaru)</span>
-                </div>
-              </div>
-
-              <div class="info-item">
-                <div class="info-icon">📞</div>
-                <div>
-                  <strong>Teléfonos de Contacto:</strong>
-                  <p><a href="tel:+51984123456">+51 984 123 456</a> · <a href="tel:084240011">(084) 240011</a></p>
-                  <span class="info-hint">Atención telefónica directa</span>
-                </div>
-              </div>
-
-              <div class="info-item">
                 <div class="info-icon">✉️</div>
                 <div>
-                  <strong>Correos Electrónicos:</strong>
-                  <p><a href="mailto:contacto@llankay.pe">contacto@llankay.pe</a></p>
-                  <p><a href="mailto:soporte@llankay.pe">soporte@llankay.pe</a></p>
+                  <strong>Correo Electrónico Único:</strong>
+                  <p><a href="mailto:proyectollankay@gmail.com" class="email-highlight">proyectollankay@gmail.com</a></p>
+                  <span class="info-hint">Canal directo para soporte, reclamos y consultas</span>
+                </div>
+              </div>
+
+              <div class="info-item">
+                <div class="info-icon">🌐</div>
+                <div>
+                  <strong>Modalidad de Atención:</strong>
+                  <p>100% Digital y en Línea</p>
+                  <span class="info-hint">Sin atención presencial en oficina física</span>
                 </div>
               </div>
 
               <div class="info-item">
                 <div class="info-icon">⏰</div>
                 <div>
-                  <strong>Horario de Atención:</strong>
-                  <p>Lunes a Sábado: 8:00 AM – 7:00 PM</p>
-                  <span class="info-hint">Guardias de emergencia técnica 24/7</span>
+                  <strong>Tiempo de Respuesta:</strong>
+                  <p>Lunes a Domingo</p>
+                  <span class="info-hint">Respuesta en menos de 24 horas hábiles</span>
+                </div>
+              </div>
+
+              <div class="info-item">
+                <div class="info-icon">🇵🇪</div>
+                <div>
+                  <strong>Ámbito de Cobertura:</strong>
+                  <p>Región Cusco, Perú</p>
+                  <span class="info-hint">Cusco Centro, Wanchaq, San Sebastián, San Jerónimo y Santiago</span>
                 </div>
               </div>
             </div>
 
-            <!-- BOTÓN WHATSAPP DIRECTO -->
-            <a href="https://wa.me/51984123456?text=Hola%20Llankay,%20necesito%20información%20sobre%20sus%20servicios" 
-               target="_blank" 
-               rel="noopener noreferrer" 
-               class="btn-whatsapp">
-              <span>💬</span> Chatear por WhatsApp Directo
+            <!-- BOTÓN CORREO DIRECTO -->
+            <a href="mailto:proyectollankay@gmail.com" 
+               class="btn-email-direct">
+              <span>✉️</span> Escribir a proyectollankay@gmail.com
             </a>
           </div>
 
-          <!-- MAPA INTEGRADO -->
-          <div class="card mapa-card">
-            <div class="mapa-header">
-              <span class="mapa-title">🗺️ Mapa de Ubicación en Cusco</span>
-              <a href="https://maps.google.com/?q=-13.5226,-71.9567" target="_blank" rel="noopener noreferrer" class="mapa-link">
-                Abrir en Google Maps ➔
-              </a>
-            </div>
-            <div class="mapa-embed-wrap">
-              <iframe 
-                src="https://www.openstreetmap.org/export/embed.html?bbox=-71.9700%2C-13.5350%2C-71.9450%2C-13.5150&amp;layer=mapnik&amp;marker=-13.5226%2C-71.9567" 
-                title="Mapa de ubicación Llankay en Wanchaq, Cusco"
-                class="mapa-iframe"
-                loading="lazy"
-              ></iframe>
+          <!-- TARJETA DE SOPORTE DIGITAL -->
+          <div class="card digital-support-card">
+            <div class="ds-header">
+              <span class="ds-icon">🛡️</span>
+              <div>
+                <strong>Soporte Digital & Garantía</strong>
+                <p>Todas las comunicaciones quedan respaldadas para la seguridad de clientes y especialistas técnicos.</p>
+              </div>
             </div>
           </div>
         </div>
@@ -92,7 +83,7 @@
         <div class="form-column">
           <div class="card form-card">
             <h3>✉️ Envíanos un Mensaje</h3>
-            <p class="form-sub">Completa el formulario y te responderemos a la brevedad posible.</p>
+            <p class="form-sub">Completa el formulario y te responderemos a tu correo a la brevedad posible.</p>
 
             <div class="form-row">
               <div class="form-group">
@@ -448,12 +439,18 @@ async function enviarMensaje() {
   margin-top: 2px;
 }
 
-.btn-whatsapp {
+.email-highlight {
+  color: var(--primary) !important;
+  font-weight: 700;
+  font-size: 15px;
+}
+
+.btn-email-direct {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 10px;
-  background: #25D366;
+  background: var(--primary-gradient);
   color: #FFFFFF;
   text-decoration: none;
   padding: 13px 20px;
@@ -461,52 +458,44 @@ async function enviarMensaje() {
   font-size: 14.5px;
   font-weight: 700;
   font-family: 'Plus Jakarta Sans', sans-serif;
-  box-shadow: 0 4px 14px rgba(37, 211, 102, 0.35);
+  box-shadow: 0 4px 14px var(--primary-glow);
   transition: all 0.2s ease;
 }
 
-.btn-whatsapp:hover {
-  background: #20BA5A;
+.btn-email-direct:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(37, 211, 102, 0.45);
+  box-shadow: 0 6px 20px var(--primary-glow);
 }
 
-.mapa-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 14px;
-}
-
-.mapa-title {
-  font-size: 15px;
-  font-weight: 700;
-  color: var(--text);
-}
-
-.mapa-link {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--primary);
-  text-decoration: none;
-}
-
-.mapa-link:hover {
-  text-decoration: underline;
-}
-
-.mapa-embed-wrap {
-  width: 100%;
-  height: 220px;
-  border-radius: var(--radius-sm);
-  overflow: hidden;
+.digital-support-card {
+  padding: 20px 24px;
+  background: var(--surface-subtle);
   border: 1px solid var(--border);
 }
 
-.mapa-iframe {
-  width: 100%;
-  height: 100%;
-  border: none;
+.ds-header {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.ds-icon {
+  font-size: 24px;
+  flex-shrink: 0;
+}
+
+.ds-header strong {
+  display: block;
+  font-size: 14px;
+  color: var(--text);
+  margin-bottom: 4px;
+}
+
+.ds-header p {
+  font-size: 13px;
+  color: var(--text2);
+  line-height: 1.5;
+  margin: 0;
 }
 
 .form-row {
