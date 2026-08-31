@@ -1,6 +1,18 @@
 import axios, { AxiosError, type InternalAxiosRequestConfig } from 'axios'
 
-const baseURL = import.meta.env.VITE_API_URL || 'http://127.0.0.1:8000/api'
+function getBaseUrl(): string {
+  let url = (import.meta.env.VITE_API_URL as string || '').trim()
+  if (!url) {
+    return 'http://127.0.0.1:8000/api'
+  }
+  url = url.replace(/\/+$/, '')
+  if (!url.endsWith('/api')) {
+    url = `${url}/api`
+  }
+  return url
+}
+
+const baseURL = getBaseUrl()
 
 export const api = axios.create({
   baseURL,
