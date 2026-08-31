@@ -22,11 +22,11 @@
       <div class="captcha-image-wrapper">
         <div v-if="cargando" class="captcha-skeleton">
           <div class="spinner-sm"></div>
-          <span>Generando reto...</span>
+          <span>{{ estadoTexto }}</span>
         </div>
         <div v-else-if="errorCarga" class="captcha-error-card">
-          <span>⚠️ Error al cargar</span>
-          <button type="button" @click="obtenerNuevoCaptcha" class="btn-retry-sm">Reintentar</button>
+          <span>⚠️ Error de conexión</span>
+          <button type="button" @click="() => obtenerNuevoCaptcha(0)" class="btn-retry-sm">🔄 Reintentar</button>
         </div>
         <div v-else class="captcha-svg-container" v-html="svgContent"></div>
       </div>
@@ -79,22 +79,40 @@ const errorCarga = ref(false)
 const captchaKey = ref('')
 const svgContent = ref('')
 const respuestaUsuario = ref('')
+const estadoTexto = ref('Generando reto...')
+const maxIntentos = 4
 
-async function obtenerNuevoCaptcha() {
+async function obtenerNuevoCaptcha(reintento = 0) {
   cargando.value = true
   errorCarga.value = false
-  respuestaUsuario.value = ''
-  emit('update:captcha', { key: '', value: '' })
+  if (reintento === 0) {
+    respuestaUsuario.value = ''
+    emit('update:captcha', { key: '', value: '' })
+  }
+
+  if (reintento > 0) {
+    estadoTexto.value = `Conectando (${reintento + 1}/${maxIntentos})...`
+  } else {
+    estadoTexto.value = 'Cargando reto...'
+  }
 
   try {
-    const res = await api.get<CaptchaResponse>('/usuarios/captcha/')
+    const res = await api.get<CaptchaResponse>('/usuarios/captcha/', { timeout: 12000 })
     captchaKey.value = res.data.captcha_key
     svgContent.value = res.data.svg_image
-    emit('update:captcha', { key: captchaKey.value, value: respuestaUsuario.value })
-  } catch (err) {
-    errorCarga.value = true
-  } finally {
+    errorCarga.value = false
     cargando.value = false
+    emit('update:captcha', { key: captchaKey.value, value: respuestaUsuario.value })
+  } catch (err: any) {
+    console.warn(`Intento ${reintento + 1} de cargar CAPTCHA falló:`, err)
+    if (reintento < maxIntentos - 1) {
+      setTimeout(() => {
+        obtenerNuevoCaptcha(reintento + 1)
+      }, 2000)
+    } else {
+      cargando.value = false
+      errorCarga.value = true
+    }
   }
 }
 
@@ -103,14 +121,14 @@ function emitirRespuesta() {
 }
 
 onMounted(() => {
-  obtenerNuevoCaptcha()
+  obtenerNuevoCaptcha(0)
 })
 
 defineExpose({
-  obtenerNuevoCaptcha,
+  obtenerNuevoCaptcha: () => obtenerNuevoCaptcha(0),
   limpiar: () => {
     respuestaUsuario.value = ''
-    obtenerNuevoCaptcha()
+    obtenerNuevoCaptcha(0)
   }
 })
 </script>
