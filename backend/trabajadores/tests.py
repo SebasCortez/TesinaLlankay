@@ -69,3 +69,33 @@ class TrabajadorTests(TestCase):
         self.assertEqual(self.trabajador.oficio, 'Gasfitero y Especialista en Termas Solares')
         self.assertEqual(self.trabajador.experiencia, 'Más de 5 años')
 
+    def test_actualizar_foto_trabajador_valida_con_uuid(self):
+        """La foto de trabajador debe ser sanitizada, re-codificada como WEBP y renombrada con UUID."""
+        import io
+        from PIL import Image
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        self.client.force_authenticate(user=self.user_tecnico)
+        img = Image.new('RGB', (120, 120), color='green')
+        img_io = io.BytesIO()
+        img.save(img_io, format='JPEG')
+        img_file = SimpleUploadedFile("tecnico_original.jpg", img_io.getvalue(), content_type="image/jpeg")
+
+        response = self.client.patch('/api/trabajadores/foto/', {'foto': img_file}, format='multipart')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.trabajador.refresh_from_db()
+        self.assertTrue(bool(self.trabajador.foto))
+        self.assertNotIn("tecnico_original.jpg", self.trabajador.foto.name)
+        self.assertTrue(self.trabajador.foto.name.endswith('.webp'))
+
+    def test_rechazo_foto_trabajador_script_malicioso(self):
+        """Se debe rechazar cualquier archivo con payload malicioso o no-imagen."""
+        from django.core.files.uploadedfile import SimpleUploadedFile
+
+        self.client.force_authenticate(user=self.user_tecnico)
+        archivo_falso = SimpleUploadedFile("exploit.php.jpg", b"<?php phpinfo(); ?>", content_type="image/jpeg")
+
+        response = self.client.patch('/api/trabajadores/foto/', {'foto': archivo_falso}, format='multipart')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+        self.assertIn('error', response.data)
+

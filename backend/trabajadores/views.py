@@ -6,6 +6,7 @@ from django.utils import timezone
 from django.db.models import Q
 from math import radians, sin, cos, sqrt, atan2
 from drf_spectacular.utils import extend_schema, OpenApiParameter
+from config.file_security import validar_y_sanitizar_imagen
 from .models import Trabajador
 from .serializers import (
     TrabajadorSerializer,
@@ -271,8 +272,19 @@ def actualizar_foto(request):
         trabajador = Trabajador.objects.get(usuario=request.user)
         if 'foto' not in request.FILES:
             return Response({'error': 'No se envió ninguna foto'}, status=status.HTTP_400_BAD_REQUEST)
-        trabajador.foto = request.FILES['foto']
+        
+        foto_raw = request.FILES['foto']
+        valido, foto_sanitizada, error_msg = validar_y_sanitizar_imagen(foto_raw, formato_salida='WEBP')
+        if not valido or foto_sanitizada is None:
+            return Response({'error': error_msg}, status=status.HTTP_400_BAD_REQUEST)
+
+        trabajador.foto = foto_sanitizada
         trabajador.save()
+        
+        # Sincronizar en el usuario también
+        request.user.foto = trabajador.foto
+        request.user.save()
+
         return Response({'mensaje': 'Foto actualizada', 'foto': request.build_absolute_uri(trabajador.foto.url)})
     except Trabajador.DoesNotExist:
         return Response({'error': 'No tienes perfil de trabajador'}, status=status.HTTP_404_NOT_FOUND)

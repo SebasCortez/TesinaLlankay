@@ -1,5 +1,6 @@
 from django.db import models
 from usuarios.models import Usuario
+from config.file_security import ruta_foto_trabajador_segura
 
 class Trabajador(models.Model):
     CATEGORIAS = [
@@ -48,7 +49,7 @@ class Trabajador(models.Model):
     motivo_rechazo = models.TextField(blank=True)
     fecha_solicitud = models.DateTimeField(auto_now_add=True)
     fecha_aprobacion = models.DateTimeField(null=True, blank=True)
-    foto = models.ImageField(upload_to='fotos_trabajadores/', blank=True, null=True)
+    foto = models.ImageField(upload_to=ruta_foto_trabajador_segura, blank=True, null=True)
 
     def __str__(self):
         return f"{self.usuario.get_full_name()} — {self.oficio} ({self.estado})"

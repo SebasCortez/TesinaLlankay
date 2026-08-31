@@ -16,6 +16,7 @@ from google.oauth2 import id_token
 from google.auth.transport import requests as google_requests
 
 from config.throttling import LoginRateThrottle, RegistroRateThrottle, PasswordResetRateThrottle
+from config.file_security import validar_y_sanitizar_imagen
 from .captcha import generar_captcha_reto
 from .models import Usuario
 from .serializers import (
@@ -268,27 +269,15 @@ def subir_foto_usuario(request):
     if 'foto' not in request.FILES:
         return Response({'error': 'No se proporcionó ningún archivo de imagen.'}, status=status.HTTP_400_BAD_REQUEST)
 
-    foto = request.FILES['foto']
+    foto_raw = request.FILES['foto']
 
-    # 1. Validación de tamaño (Máx 5MB)
-    if foto.size > 5 * 1024 * 1024:
-        return Response({'error': 'La imagen no debe superar los 5 MB.'}, status=status.HTTP_400_BAD_REQUEST)
-
-    # 2. Validación de extensión
-    ext = os.path.splitext(foto.name)[1].lower()
-    if ext not in ['.jpg', '.jpeg', '.png', '.webp']:
-        return Response({'error': 'Formato no permitido. Solo se aceptan imágenes JPG, PNG o WEBP.'}, status=status.HTTP_400_BAD_REQUEST)
-
-    # 3. Validación de contenido con Pillow (Magic Bytes / Integrity Check)
-    try:
-        img = Image.open(foto)
-        img.verify()
-        foto.seek(0)
-    except Exception:
-        return Response({'error': 'El archivo subido no es una imagen válida o está dañado.'}, status=status.HTTP_400_BAD_REQUEST)
+    # Validación integral OWASP: Whitelist, Magic Bytes, Re-encoding y Sanitización
+    valido, foto_sanitizada, error_msg = validar_y_sanitizar_imagen(foto_raw, formato_salida='WEBP')
+    if not valido or foto_sanitizada is None:
+        return Response({'error': error_msg}, status=status.HTTP_400_BAD_REQUEST)
 
     # Guardar en modelo Usuario
-    request.user.foto = foto
+    request.user.foto = foto_sanitizada
     request.user.save()
 
     # Si es técnico, sincronizar también en su perfil técnico

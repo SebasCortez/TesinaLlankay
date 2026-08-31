@@ -1,5 +1,6 @@
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from config.file_security import ruta_foto_usuario_segura
 
 class Usuario(AbstractUser):
     ROLES = [
@@ -11,7 +12,7 @@ class Usuario(AbstractUser):
     rol = models.CharField(max_length=20, choices=ROLES, default='cliente')
     celular = models.CharField(max_length=20, blank=True)
     distrito = models.CharField(max_length=100, blank=True)
-    foto = models.ImageField(upload_to='fotos/', blank=True, null=True)
+    foto = models.ImageField(upload_to=ruta_foto_usuario_segura, blank=True, null=True)
     fecha_registro = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
