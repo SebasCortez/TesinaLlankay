@@ -23,6 +23,11 @@ class TrabajadorRegistroSerializer(serializers.ModelSerializer):
         model = Trabajador
         fields = ['categoria', 'oficio', 'experiencia', 'descripcion']
 
+class TrabajadorActualizarSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Trabajador
+        fields = ['categoria', 'oficio', 'experiencia', 'descripcion']
+
 class TrabajadorAdminSerializer(serializers.ModelSerializer):
     usuario = UsuarioSerializer(read_only=True)
 

@@ -13,12 +13,14 @@
 import { ref, onMounted, onUnmounted, watch } from 'vue'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
+import type { Trabajador } from '../types'
 
 const props = defineProps<{
-    tecnicos: any[]
+    tecnicos: Trabajador[]
     latUsuario?: number | null
     lonUsuario?: number | null
 }>()
+
 
 const emit = defineEmits(['seleccionar'])
 const mapaRef = ref<HTMLElement | null>(null)

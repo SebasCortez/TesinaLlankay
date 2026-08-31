@@ -1,0 +1,20 @@
+# Robots.txt para Llankay (https://llankay.pe)
+User-agent: *
+Allow: /
+Allow: /buscar
+Allow: /contacto
+Allow: /registro-cliente
+Allow: /registro-trabajador
+Allow: /politica-privacidad
+Allow: /terminos-condiciones
+Allow: /login
+Allow: /recuperar-password
+
+# Proteger rutas privadas de usuarios y administración
+Disallow: /admin/
+Disallow: /mi-perfil/
+Disallow: /solicitudes/
+Disallow: /trabajador/*/solicitar
+
+# Ubicación del Sitemap XML
+Sitemap: https://llankay.pe/sitemap.xml

@@ -8,6 +8,17 @@ class Trabajador(models.Model):
         ('Carpintería', 'Carpintería'),
         ('Cerrajería', 'Cerrajería'),
         ('Pintura', 'Pintura'),
+        ('Albañilería y Construcción', 'Albañilería y Construcción'),
+        ('Drywall y Cielorraso', 'Drywall y Cielorraso'),
+        ('Soldadura y Estructuras Metálicas', 'Soldadura y Estructuras Metálicas'),
+        ('Reparación de Electrodomésticos', 'Reparación de Electrodomésticos'),
+        ('Termas Solares y Calefacción', 'Termas Solares y Calefacción'),
+        ('Refrigeración y Climatización', 'Refrigeración y Climatización'),
+        ('Vidriería y Aluminios', 'Vidriería y Aluminios'),
+        ('Jardinería y Áreas Verdes', 'Jardinería y Áreas Verdes'),
+        ('Mantenimiento de Cómputo y Redes', 'Mantenimiento de Cómputo y Redes'),
+        ('Limpieza y Desinfección', 'Limpieza y Desinfección'),
+        ('Otro', 'Otro (Especialidad no listada)'),
     ]
 
     EXPERIENCIA = [
@@ -24,7 +35,7 @@ class Trabajador(models.Model):
     ]
 
     usuario = models.OneToOneField(Usuario, on_delete=models.CASCADE, related_name='perfil_trabajador')
-    categoria = models.CharField(max_length=50, choices=CATEGORIAS)
+    categoria = models.CharField(max_length=100, choices=CATEGORIAS)
     oficio = models.CharField(max_length=150)
     experiencia = models.CharField(max_length=50, choices=EXPERIENCIA)
     descripcion = models.TextField(blank=True)

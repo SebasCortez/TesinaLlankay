@@ -1,0 +1,297 @@
+openapi: 3.0.3
+info:
+  title: TécniCusco API - Plataforma de Servicios Técnicos (Tesina Llankay)
+  version: 1.0.0
+  description: API RESTful para la gestión de usuarios, técnicos independientes, solicitudes
+    de servicio, calificaciones y geolocalización en Cusco.
+paths:
+  /api/admin/clientes/:
+    get:
+      operationId: admin_clientes_retrieve
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/admin/solicitudes/:
+    get:
+      operationId: admin_solicitudes_retrieve
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/admin/trabajadores/:
+    get:
+      operationId: admin_trabajadores_retrieve
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/calificaciones/:
+    post:
+      operationId: calificaciones_create
+      tags:
+      - calificaciones
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/calificaciones/{trabajador_id}/:
+    get:
+      operationId: calificaciones_retrieve
+      parameters:
+      - in: path
+        name: trabajador_id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - calificaciones
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/solicitudes/:
+    get:
+      operationId: solicitudes_retrieve
+      tags:
+      - solicitudes
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/solicitudes/{id}/estado/:
+    patch:
+      operationId: solicitudes_estado_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - solicitudes
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/solicitudes/crear/:
+    post:
+      operationId: solicitudes_crear_create
+      tags:
+      - solicitudes
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/trabajadores/:
+    get:
+      operationId: trabajadores_retrieve
+      tags:
+      - trabajadores
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/trabajadores/{id}/:
+    get:
+      operationId: trabajadores_retrieve_2
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - trabajadores
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/trabajadores/{id}/aprobar/:
+    post:
+      operationId: trabajadores_aprobar_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - trabajadores
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/trabajadores/{id}/rechazar/:
+    post:
+      operationId: trabajadores_rechazar_create
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - trabajadores
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/trabajadores/disponibilidad/:
+    patch:
+      operationId: trabajadores_disponibilidad_partial_update
+      tags:
+      - trabajadores
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/trabajadores/foto/:
+    patch:
+      operationId: trabajadores_foto_partial_update
+      tags:
+      - trabajadores
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/trabajadores/mi-perfil/:
+    get:
+      operationId: trabajadores_mi_perfil_retrieve
+      tags:
+      - trabajadores
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/trabajadores/pendientes/:
+    get:
+      operationId: trabajadores_pendientes_retrieve
+      tags:
+      - trabajadores
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/trabajadores/registro/:
+    post:
+      operationId: trabajadores_registro_create
+      tags:
+      - trabajadores
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/trabajadores/ubicacion/:
+    patch:
+      operationId: trabajadores_ubicacion_partial_update
+      tags:
+      - trabajadores
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/usuarios/login/:
+    post:
+      operationId: usuarios_login_create
+      tags:
+      - usuarios
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/usuarios/perfil/:
+    get:
+      operationId: usuarios_perfil_retrieve
+      tags:
+      - usuarios
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          description: No response body
+  /api/usuarios/registro/:
+    post:
+      operationId: usuarios_registro_create
+      tags:
+      - usuarios
+      security:
+      - jwtAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /api/usuarios/token/refresh/:
+    post:
+      operationId: usuarios_token_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - usuarios
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+components:
+  schemas:
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+      required:
+      - access
+      - refresh
+  securitySchemes:
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT

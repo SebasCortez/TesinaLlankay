@@ -3,8 +3,8 @@ import { createApp } from 'vue'
 import { createPinia } from 'pinia'
 import App from './App.vue'
 import router from './router'
-import axios from 'axios'
-
+import { useThemeStore } from './stores/theme'
+import { registerSW } from 'virtual:pwa-register'
 
 const app = createApp(App)
 const pinia = createPinia()
@@ -12,18 +12,10 @@ const pinia = createPinia()
 app.use(pinia)
 app.use(router)
 
-// Cargar token si existe
-const token = localStorage.getItem('token')
-if (token) {
-  axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
-}
-
-import { useThemeStore } from './stores/theme'
 const theme = useThemeStore()
 theme.init()
 
-import { registerSW } from 'virtual:pwa-register'
-
 registerSW({ immediate: true })
 
-app.mount('#app')   
+app.mount('#app')
+   

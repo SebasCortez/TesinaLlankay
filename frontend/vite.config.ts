@@ -10,8 +10,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico'],
       manifest: {
-        name: 'TécniCusco - Servicios técnicos en Cusco',
-        short_name: 'TécniCusco',
+        name: 'Llankay - Servicios técnicos en Cusco',
+        short_name: 'Llankay',
         description: 'Encuentra técnicos verificados cerca de ti en Cusco',
         theme_color: '#2563EB',
         background_color: '#F9FAFB',
