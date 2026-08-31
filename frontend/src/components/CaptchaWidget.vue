@@ -7,7 +7,7 @@
       <button
         type="button"
         class="btn-refresh-captcha"
-        @click="obtenerNuevoCaptcha"
+        @click="refrescarCaptcha"
         :disabled="cargando"
         title="Generar nuevo código de verificación"
         aria-label="Refrescar CAPTCHA"
@@ -118,6 +118,10 @@ async function obtenerNuevoCaptcha(reintento = 0) {
 
 function emitirRespuesta() {
   emit('update:captcha', { key: captchaKey.value, value: respuestaUsuario.value.trim() })
+}
+
+function refrescarCaptcha() {
+  obtenerNuevoCaptcha(0)
 }
 
 onMounted(() => {
