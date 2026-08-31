@@ -186,9 +186,9 @@ FRONTEND_URL = os.getenv('FRONTEND_URL', 'http://localhost:5173')
 # Google OAuth
 GOOGLE_CLIENT_ID = os.getenv('GOOGLE_CLIENT_ID', '')
 
-# Groq API (Agente Conversacional con LLaMA 3.3 70B)
+# Groq API (Agente Conversacional Inteligente)
 GROQ_API_KEY = os.getenv('GROQ_API_KEY', '')
-GROQ_MODEL = os.getenv('GROQ_MODEL', 'llama-3.3-70b-versatile')
+GROQ_MODEL = os.getenv('GROQ_MODEL', 'openai/gpt-oss-120b')
 GROQ_BASE_URL = os.getenv('GROQ_BASE_URL', 'https://api.groq.com/openai/v1')
 
 # Cuotas de uso y Controles de Costo para Agente IA
