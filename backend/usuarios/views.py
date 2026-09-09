@@ -172,37 +172,21 @@ def google_login(request):
     credential = serializer.validated_data['credential']
     google_client_id = getattr(settings, 'GOOGLE_CLIENT_ID', '')
 
-    google_data = None
-
-    # Modo simulación para desarrollo local / pruebas / prototipo
-    if credential.startswith('demo-google-token:'):
-        email_demo = credential.replace('demo-google-token:', '').strip().lower()
-        if '@' in email_demo:
-            name_part = email_demo.split('@')[0].replace('.', ' ').title()
-            google_data = {
-                'email': email_demo,
-                'given_name': name_part.split(' ')[0] if ' ' in name_part else name_part,
-                'family_name': name_part.split(' ')[1] if ' ' in name_part else '',
-                'name': name_part
-            }
-
-
-    if not google_data:
-        # Intento 1: Verificar con google-auth si hay client_id o token estándar
+    # Validación con Google OAuth 2.0 / Google Identity Services
+    try:
+        google_data = id_token.verify_oauth2_token(
+            credential,
+            google_requests.Request(),
+            google_client_id if google_client_id else None
+        )
+    except Exception:
+        # Intento alternativo: Consultar endpoint oficial tokeninfo de Google
         try:
-            google_data = id_token.verify_oauth2_token(
-                credential,
-                google_requests.Request(),
-                google_client_id if google_client_id else None
-            )
-        except Exception:
-            # Intento 2: Consultar directamente el endpoint tokeninfo de Google
-            try:
-                resp = requests.get(f"https://oauth2.googleapis.com/tokeninfo?id_token={credential}", timeout=5)
-                if resp.status_code == 200:
-                    google_data = resp.json()
-            except Exception as e:
-                print(f"Error al validar token de Google: {e}")
+            resp = requests.get(f"https://oauth2.googleapis.com/tokeninfo?id_token={credential}", timeout=5)
+            if resp.status_code == 200:
+                google_data = resp.json()
+        except Exception as e:
+            print(f"Error al validar token de Google: {e}")
 
     if not google_data or 'email' not in google_data:
         return Response({'error': 'El token de Google no es válido o ha expirado.'}, status=status.HTTP_400_BAD_REQUEST)

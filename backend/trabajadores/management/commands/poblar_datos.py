@@ -251,6 +251,74 @@ class Command(BaseCommand):
                 'disponible': True,
                 'calif': 4.6,
                 'num_calif': 7
+            },
+            {
+                'username': 'marcos_constructor',
+                'first_name': 'Marcos',
+                'last_name': 'Huamán Quispe',
+                'email': 'marcos.constructor@gmail.com',
+                'celular': '984556677',
+                'distrito': 'San Sebastián',
+                'categoria': 'Albañilería y Construcción',
+                'oficio': 'Maestro de Obra y Albañilería Estructural',
+                'experiencia': 'Más de 5 años',
+                'descripcion': 'Maestro de obra con más de 12 años de experiencia en edificaciones antisísmicas en Cusco, techados, asentado de ladrillo, tarrajeos y remodelación integral.',
+                'latitud': -13.5350,
+                'longitud': -71.9320,
+                'disponible': True,
+                'calif': 4.9,
+                'num_calif': 18
+            },
+            {
+                'username': 'wilber_drywall',
+                'first_name': 'Wilber',
+                'last_name': 'Ccallo Mamani',
+                'email': 'wilber.drywall@gmail.com',
+                'celular': '984112244',
+                'distrito': 'Wanchaq',
+                'categoria': 'Drywall y Cielorraso',
+                'oficio': 'Instalador Profesional de Drywall y Cielorraso PVC',
+                'experiencia': '3-5 años',
+                'descripcion': 'Especialista en tabiquería liviana, divisiones acústicas, cielorraso suspendido, figuras en yeso y acabados de alta precisión para viviendas y locales comerciales.',
+                'latitud': -13.5285,
+                'longitud': -71.9610,
+                'disponible': True,
+                'calif': 4.8,
+                'num_calif': 12
+            },
+            {
+                'username': 'carlos_electro',
+                'first_name': 'Carlos Enrique',
+                'last_name': 'Ttito Farfán',
+                'email': 'carlos.electro@gmail.com',
+                'celular': '984778811',
+                'distrito': 'Cusco',
+                'categoria': 'Reparación de Electrodomésticos',
+                'oficio': 'Técnico en Refrigeración, Lavadoras y Microondas',
+                'experiencia': 'Más de 5 años',
+                'descripcion': 'Diagnóstico y reparación a domicilio de refrigeradoras no-frost, lavadoras automáticas, microondas y campanas extractoras con repuestos originales y garantía escrita.',
+                'latitud': -13.5180,
+                'longitud': -71.9750,
+                'disponible': True,
+                'calif': 4.9,
+                'num_calif': 21
+            },
+            {
+                'username': 'jorge_soldador',
+                'first_name': 'Jorge Luis',
+                'last_name': 'Puma Yucra',
+                'email': 'jorge.soldador@gmail.com',
+                'celular': '984998822',
+                'distrito': 'Santiago',
+                'categoria': 'Soldadura y Estructuras Metálicas',
+                'oficio': 'Soldador Calificado y Estructuras Metálicas',
+                'experiencia': '3-5 años',
+                'descripcion': 'Fabricación y montaje de rejas de seguridad, portones corredizos, barandas en fierro forjado y acero inoxidable, techos parabólicos y cerrajería metálica pesada.',
+                'latitud': -13.5390,
+                'longitud': -71.9840,
+                'disponible': True,
+                'calif': 4.7,
+                'num_calif': 15
             }
         ]
 
@@ -297,6 +365,10 @@ class Command(BaseCommand):
             {'puntuacion': 5, 'comentario': 'Instaló el tablero general de mi departamento en Wanchaq con materiales de calidad. Muy profesional y respetuoso.', 'cliente': clientes_objs[1], 'trab': trabajadores_creados[0]},
             {'puntuacion': 4, 'comentario': 'Rápido servicio para abrir la puerta de mi casa un domingo por la noche. Precio justo.', 'cliente': clientes_objs[0], 'trab': trabajadores_creados[3]},
             {'puntuacion': 5, 'comentario': 'Restauró una puerta colonial antigua dejándola como nueva. Gran maestro carpintero.', 'cliente': clientes_objs[1], 'trab': trabajadores_creados[2]},
+            {'puntuacion': 5, 'comentario': 'Construyó un muro de contención y tarrajeó la fachada en San Sebastián. Trabajo impecable y muy ordenado.', 'cliente': clientes_objs[0], 'trab': trabajadores_creados[10]},
+            {'puntuacion': 5, 'comentario': 'Excelente instalación de divisiones de drywall en mi oficina de Wanchaq. Rápido y limpio.', 'cliente': clientes_objs[1], 'trab': trabajadores_creados[11]},
+            {'puntuacion': 5, 'comentario': 'Reparó mi refrigeradora en menos de 2 horas. Diagnóstico certero y repuesto original.', 'cliente': clientes_objs[0], 'trab': trabajadores_creados[12]},
+            {'puntuacion': 4, 'comentario': 'Fabricó una reja y portón corredizo de muy buena calidad para mi cochera en Santiago.', 'cliente': clientes_objs[1], 'trab': trabajadores_creados[13]},
         ]
 
         for c_item in califs_ejemplo:

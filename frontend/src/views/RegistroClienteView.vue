@@ -9,17 +9,12 @@
           <p>Encuentra y contrata técnicos verificados en Cusco</p>
         </div>
 
-        <!-- GOOGLE SIGN-UP BUTTON -->
+        <!-- GOOGLE SIGN-UP BUTTON OFICIAL -->
         <div class="google-btn-wrap">
-          <button class="btn-google" @click="iniciarConGoogle" :disabled="cargandoGoogle">
-            <svg class="google-svg" viewBox="0 0 24 24">
-              <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
-              <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
-              <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
-              <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
-            </svg>
-            <span>{{ cargandoGoogle ? 'Conectando con Google...' : 'Registrarme con Google' }}</span>
-          </button>
+          <div id="googleBtnRegister" ref="googleBtnRef" class="g-btn-container"></div>
+          <div v-if="cargandoGoogle" class="google-loading-text">
+            <span>🔄 Registrando / Conectando con Google...</span>
+          </div>
         </div>
 
         <div class="login-separator">
@@ -147,7 +142,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import api from '../services/api'
 import { useAuthStore } from '../stores/auth'
@@ -160,6 +155,7 @@ const aceptoTerminos = ref(true)
 const errores = ref<{ [key: string]: string }>({})
 const cargando = ref(false)
 const cargandoGoogle = ref(false)
+const googleBtnRef = ref<HTMLElement | null>(null)
 const distritos = ['Cusco', 'Wanchaq', 'San Sebastián', 'San Jerónimo', 'Santiago']
 const form = ref({ first_name: '', last_name: '', username: '', email: '', celular: '', distrito: '', password: '', rol: 'cliente' })
 
@@ -249,31 +245,65 @@ async function registrar() {
   }
 }
 
-function iniciarConGoogle() {
-  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
-  const google = (window as any).google
+async function handleGoogleCallback(response: any) {
+  if (!response?.credential) return
+  cargandoGoogle.value = true
+  error.value = ''
+  try {
+    await auth.loginConGoogle(response.credential)
+    router.push('/buscar')
+  } catch (err: any) {
+    error.value = err.response?.data?.error || 'No se pudo conectar con Google. Inténtalo de nuevo.'
+  } finally {
+    cargandoGoogle.value = false
+  }
+}
 
-  if (google && googleClientId) {
-    google.accounts.id.prompt((notification: any) => {
-      if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-        router.push('/login')
-      }
-    })
-  } else {
-    const mockEmail = prompt('Prueba de registro con Google:\nIngresa tu correo de Google (ej: tu.nombre@gmail.com):', 'usuario.demo@gmail.com')
-    if (mockEmail && mockEmail.includes('@')) {
-      cargandoGoogle.value = true
-      error.value = ''
-      auth.loginConGoogle(`demo-google-token:${mockEmail.trim()}`).then(() => {
-        router.push('/buscar')
-      }).catch((err: any) => {
-        error.value = err.response?.data?.error || 'Error al procesar el registro con Google'
-      }).finally(() => {
-        cargandoGoogle.value = false
+function initGoogleAuth() {
+  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
+  if (!googleClientId) return
+
+  const renderBtn = () => {
+    const google = (window as any).google
+    if (google?.accounts?.id && googleBtnRef.value) {
+      google.accounts.id.initialize({
+        client_id: googleClientId,
+        callback: handleGoogleCallback,
+        auto_select: false
+      })
+      googleBtnRef.value.innerHTML = ''
+      const isDark = document.documentElement.classList.contains('dark')
+      google.accounts.id.renderButton(googleBtnRef.value, {
+        theme: isDark ? 'filled_black' : 'outline',
+        size: 'large',
+        width: 378,
+        text: 'signup_with',
+        shape: 'rectangular',
+        logo_alignment: 'center'
       })
     }
   }
+
+  const g = (window as any).google
+  if (g?.accounts?.id) {
+    renderBtn()
+  } else {
+    let retries = 0
+    const interval = setInterval(() => {
+      retries++
+      if ((window as any).google?.accounts?.id && googleBtnRef.value) {
+        clearInterval(interval)
+        renderBtn()
+      } else if (retries > 25) {
+        clearInterval(interval)
+      }
+    }, 150)
+  }
 }
+
+onMounted(() => {
+  initGoogleAuth()
+})
 </script>
 
 <style scoped>
@@ -335,37 +365,28 @@ function iniciarConGoogle() {
 /* BOTON GOOGLE */
 .google-btn-wrap {
   margin-bottom: 16px;
-}
-
-.btn-google {
-  width: 100%;
-  padding: 11px 18px;
-  background: var(--surface);
-  color: var(--text);
-  border: 1.5px solid var(--border2);
-  border-radius: var(--radius-sm);
-  font-size: 14.5px;
-  font-weight: 600;
-  font-family: 'Plus Jakarta Sans', sans-serif;
-  cursor: pointer;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 12px;
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: var(--shadow-sm);
+  width: 100%;
 }
 
-.btn-google:hover {
-  background: var(--surface-subtle);
-  border-color: var(--text3);
-  transform: translateY(-2px);
-  box-shadow: var(--shadow-md);
+.g-btn-container {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  min-height: 44px;
 }
 
-.google-svg {
-  width: 20px;
-  height: 20px;
+.google-loading-text {
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--primary);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
 }
 
 .login-separator {
