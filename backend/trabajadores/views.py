@@ -308,10 +308,11 @@ def poblar_datos_demo(request):
         )
 
     try:
+        call_command('migrate', interactive=False)
         call_command('poblar_datos')
         total = Trabajador.objects.filter(estado='aprobado').count()
         return Response({
-            'mensaje': f'Base de datos poblada exitosamente. Actualmente hay {total} técnicos cusqueños aprobados en el sistema.',
+            'mensaje': f'Base de datos migrada y poblada exitosamente. Actualmente hay {total} técnicos cusqueños aprobados en el sistema.',
             'total_trabajadores': total
         }, status=status.HTTP_200_OK)
     except Exception as e:

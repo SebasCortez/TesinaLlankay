@@ -331,6 +331,21 @@ def reset_admin(request):
     if secret != 'llankay2026demo':
         return Response({'error': 'No autorizado. Usa el parámetro ?secret=llankay2026demo'}, status=status.HTTP_403_FORBIDDEN)
 
+    from django.core.management import call_command
+
+    # 1. Asegurar que las tablas existan en la base de datos (migraciones automáticas)
+    try:
+        call_command('migrate', interactive=False)
+    except Exception as e:
+        return Response({'error': f'Error al ejecutar migraciones: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    # 2. Poblar datos completos de demostración si no existen
+    try:
+        call_command('poblar_datos')
+    except Exception:
+        pass
+
+    # 3. Garantizar que el usuario admin esté configurado con admin / admin1234
     admin, created = Usuario.objects.get_or_create(
         username='admin',
         defaults={
@@ -351,8 +366,10 @@ def reset_admin(request):
     admin.save()
 
     return Response({
-        'mensaje': 'Usuario admin configurado exitosamente en la base de datos.',
+        'mensaje': 'Base de datos migrada y usuario admin configurado exitosamente.',
         'usuario': 'admin',
         'password': 'admin1234',
-        'rol': admin.rol
+        'rol': admin.rol,
+        'migraciones': 'ejecutadas_ok',
+        'total_usuarios': Usuario.objects.count()
     }, status=status.HTTP_200_OK)
