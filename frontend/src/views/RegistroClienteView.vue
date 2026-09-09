@@ -260,7 +260,7 @@ async function handleGoogleCallback(response: any) {
 }
 
 function initGoogleAuth() {
-  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID
+  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID || '605736068030-jru251fq1896bsar8p90skg4hdl4q768.apps.googleusercontent.com'
   if (!googleClientId) return
 
   const renderBtn = () => {
