@@ -319,3 +319,40 @@ def admin_listar_clientes(request):
     clientes = Usuario.objects.filter(rol='cliente')
     serializer = UsuarioSerializer(clientes, many=True, context={'request': request})
     return Response(serializer.data)
+
+@extend_schema(
+    summary="Crear o resetear usuario admin con credenciales de demo (admin / admin1234)",
+    responses={200: dict, 403: dict}
+)
+@api_view(['GET', 'POST'])
+@permission_classes([AllowAny])
+def reset_admin(request):
+    secret = request.query_params.get('secret') or (request.data.get('secret') if hasattr(request, 'data') else None)
+    if secret != 'llankay2026demo':
+        return Response({'error': 'No autorizado. Usa el parámetro ?secret=llankay2026demo'}, status=status.HTTP_403_FORBIDDEN)
+
+    admin, created = Usuario.objects.get_or_create(
+        username='admin',
+        defaults={
+            'email': 'admin@llankay.pe',
+            'first_name': 'Admin',
+            'last_name': 'Llankay',
+            'rol': 'admin',
+            'distrito': 'Cusco',
+            'celular': '984000111',
+            'is_staff': True,
+            'is_superuser': True
+        }
+    )
+    admin.set_password('admin1234')
+    admin.rol = 'admin'
+    admin.is_staff = True
+    admin.is_superuser = True
+    admin.save()
+
+    return Response({
+        'mensaje': 'Usuario admin configurado exitosamente en la base de datos.',
+        'usuario': 'admin',
+        'password': 'admin1234',
+        'rol': admin.rol
+    }, status=status.HTTP_200_OK)

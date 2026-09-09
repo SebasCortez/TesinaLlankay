@@ -26,7 +26,7 @@ class Command(BaseCommand):
             Usuario.objects.exclude(username='admin').delete()
             self.stdout.write(self.style.SUCCESS('Base de datos limpiada.'))
 
-        # 1. Crear Administrador
+        # 1. Crear o actualizar Administrador con la contraseña exacta
         admin_user, created = Usuario.objects.get_or_create(
             username='admin',
             defaults={
@@ -40,10 +40,12 @@ class Command(BaseCommand):
                 'is_superuser': True
             }
         )
-        if created:
-            admin_user.set_password('Admin123!')
-            admin_user.save()
-            self.stdout.write(self.style.SUCCESS('[OK] Superusuario admin creado (Pass: Admin123!)'))
+        admin_user.set_password('admin1234')
+        admin_user.rol = 'admin'
+        admin_user.is_staff = True
+        admin_user.is_superuser = True
+        admin_user.save()
+        self.stdout.write(self.style.SUCCESS('[OK] Administrador configurado (Usuario: admin | Pass: admin1234)'))
 
         # 2. Crear Clientes de demostración
         clientes_data = [
