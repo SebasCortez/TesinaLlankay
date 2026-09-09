@@ -55,6 +55,21 @@ export const useAuthStore = defineStore('auth', {
       return res.data
     },
 
+    guardarSesion(data: LoginResponse) {
+      this.token = data.access
+      this.refreshToken = data.refresh
+      this.usuario = data.usuario
+
+      if (data.usuario?.rol === 'trabajador' && !localStorage.getItem('modoActual')) {
+        this.modoActual = 'trabajador'
+        localStorage.setItem('modoActual', 'trabajador')
+      }
+
+      localStorage.setItem('token', data.access)
+      localStorage.setItem('refreshToken', data.refresh)
+      localStorage.setItem('usuario', JSON.stringify(data.usuario))
+    },
+
     cambiarModo(modo: 'cliente' | 'trabajador') {
       this.modoActual = modo
       localStorage.setItem('modoActual', modo)

@@ -373,7 +373,7 @@ async function registrar() {
 
   cargando.value = true
   try {
-    await api.post('/usuarios/registro/', {
+    const res = await api.post('/usuarios/registro/', {
       first_name: form.value.first_name,
       last_name: form.value.last_name,
       username: form.value.username,
@@ -383,7 +383,10 @@ async function registrar() {
       password: form.value.password,
       rol: 'trabajador'
     })
-    await auth.login(form.value.username, form.value.password)
+
+    if (res.data?.access) {
+      auth.guardarSesion(res.data)
+    }
 
     // Si seleccionó 'Otro', guardar con categoria='Otro' y detallar en oficio
     const oficioFinal = form.value.categoria === 'Otro' && form.value.categoria_personalizada
@@ -401,11 +404,15 @@ async function registrar() {
   } catch (e: any) {
     const data = e.response?.data
     if (data?.username) {
-      error.value = `Usuario: ${data.username[0]}`
+      error.value = `Usuario: ${Array.isArray(data.username) ? data.username[0] : data.username}`
+    } else if (data?.email) {
+      error.value = `Correo: ${Array.isArray(data.email) ? data.email[0] : data.email}`
     } else if (data?.celular) {
-      error.value = `Celular: ${data.celular[0]}`
+      error.value = `Celular: ${Array.isArray(data.celular) ? data.celular[0] : data.celular}`
+    } else if (data?.password) {
+      error.value = `Contraseña: ${Array.isArray(data.password) ? data.password[0] : data.password}`
     } else {
-      error.value = data?.error || 'Error al registrar el perfil, intenta de nuevo'
+      error.value = data?.error || data?.detail || 'Error al registrar el perfil, intenta de nuevo'
     }
   } finally {
     cargando.value = false

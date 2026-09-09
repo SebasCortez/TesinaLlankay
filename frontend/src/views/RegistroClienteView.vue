@@ -231,15 +231,18 @@ async function registrar() {
 
   cargando.value = true
   try {
-    await api.post('/usuarios/registro/', form.value)
-    await auth.login(form.value.username, form.value.password)
+    const res = await api.post('/usuarios/registro/', form.value)
+    if (res.data?.access) {
+      auth.guardarSesion(res.data)
+    }
     router.push({ path: '/gracias', query: { tipo: 'registro' } })
   } catch (err: any) {
     const data = err.response?.data
-    if (data?.username) errores.value.username = data.username[0]
-    else if (data?.email) errores.value.email = data.email[0]
-    else if (data?.celular) errores.value.celular = data.celular[0]
-    else error.value = data?.error || 'Error al registrar la cuenta. Inténtalo nuevamente.'
+    if (data?.username) errores.value.username = Array.isArray(data.username) ? data.username[0] : data.username
+    else if (data?.email) errores.value.email = Array.isArray(data.email) ? data.email[0] : data.email
+    else if (data?.celular) errores.value.celular = Array.isArray(data.celular) ? data.celular[0] : data.celular
+    else if (data?.password) errores.value.password = Array.isArray(data.password) ? data.password[0] : data.password
+    else error.value = data?.error || data?.detail || 'Error al registrar la cuenta. Inténtalo nuevamente.'
   } finally {
     cargando.value = false
   }

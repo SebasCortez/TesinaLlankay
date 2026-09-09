@@ -54,11 +54,14 @@ def obtener_captcha(request):
 def registro(request):
     serializer = RegistroSerializer(data=request.data)
     if serializer.is_valid():
-        serializer.save()
-        return Response(
-            {'mensaje': 'Usuario registrado exitosamente'},
-            status=status.HTTP_201_CREATED
-        )
+        user = serializer.save()
+        tokens = RefreshToken.for_user(user)
+        return Response({
+            'mensaje': 'Usuario registrado exitosamente',
+            'access': str(tokens.access_token),
+            'refresh': str(tokens),
+            'usuario': UsuarioSerializer(user, context={'request': request}).data
+        }, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

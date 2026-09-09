@@ -14,3 +14,5 @@ services:
         value: "*"
       - key: CORS_ALLOW_ALL_ORIGINS
         value: "True"
+      - key: GOOGLE_CLIENT_ID
+        value: "605736068030-jru251fq1896bsar8p90skg4hdl4q768.apps.googleusercontent.com"
