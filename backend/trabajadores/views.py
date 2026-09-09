@@ -288,3 +288,31 @@ def actualizar_foto(request):
         return Response({'mensaje': 'Foto actualizada', 'foto': request.build_absolute_uri(trabajador.foto.url)})
     except Trabajador.DoesNotExist:
         return Response({'error': 'No tienes perfil de trabajador'}, status=status.HTTP_404_NOT_FOUND)
+
+from django.core.management import call_command
+
+@extend_schema(
+    summary="Poblar datos de técnicos y reseñas para demostración",
+    responses={200: dict, 403: dict, 500: dict}
+)
+@api_view(['GET', 'POST'])
+@permission_classes([AllowAny])
+def poblar_datos_demo(request):
+    secret = request.query_params.get('secret') or (request.data.get('secret') if hasattr(request, 'data') else None)
+    es_admin = request.user and request.user.is_authenticated and getattr(request.user, 'rol', None) == 'admin'
+
+    if not es_admin and secret != 'llankay2026demo':
+        return Response(
+            {'error': 'No autorizado. Inicia sesión como administrador o usa el parámetro ?secret=llankay2026demo'},
+            status=status.HTTP_403_FORBIDDEN
+        )
+
+    try:
+        call_command('poblar_datos')
+        total = Trabajador.objects.filter(estado='aprobado').count()
+        return Response({
+            'mensaje': f'Base de datos poblada exitosamente. Actualmente hay {total} técnicos cusqueños aprobados en el sistema.',
+            'total_trabajadores': total
+        }, status=status.HTTP_200_OK)
+    except Exception as e:
+        return Response({'error': f'Error al poblar datos: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

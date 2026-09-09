@@ -43,6 +43,9 @@
             <p>Resumen general de la plataforma</p>
           </div>
           <div class="header-export-actions">
+            <button class="btn-primary btn-sm" @click="poblarDatosDemostracion" :disabled="poblandoDemo">
+              ⚡ {{ poblandoDemo ? 'Cargando datos...' : 'Poblar Técnicos Demo' }}
+            </button>
             <button class="btn-secondary btn-sm" @click="exportarTecnicosCSV">
               📊 Exportar Técnicos (CSV)
             </button>
@@ -426,6 +429,21 @@ const notasTemp = ref<Record<number, string>>({})
 
 const filtroReq = ref<string>('todos')
 const busquedaReq = ref<string>('')
+const poblandoDemo = ref(false)
+
+async function poblarDatosDemostracion() {
+  if (!confirm('¿Deseas poblar la base de datos con los 14 técnicos cusqueños de demostración y sus calificaciones?')) return
+  poblandoDemo.value = true
+  try {
+    const res = await api.post<{ mensaje: string; total_trabajadores: number }>('/trabajadores/poblar-demo/?secret=llankay2026demo')
+    alert(res.data.mensaje || '¡Datos de demostración cargados exitosamente!')
+    await cargarTodo()
+  } catch (err: any) {
+    alert(err.response?.data?.error || 'Error al poblar datos de demostración.')
+  } finally {
+    poblandoDemo.value = false
+  }
+}
 
 const requerimientosPendientes = computed(() => {
   return requerimientos.value.filter(r => r.estado === 'pendiente')

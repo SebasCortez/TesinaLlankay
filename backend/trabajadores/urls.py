@@ -12,4 +12,5 @@ urlpatterns = [
     path('<int:pk>/', views.detalle_trabajador),
     path('disponibilidad/', views.toggle_disponibilidad),
     path('foto/', views.actualizar_foto),
+    path('poblar-demo/', views.poblar_datos_demo),
 ]
